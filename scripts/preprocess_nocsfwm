@@ -1,8 +1,5 @@
 #! /bin/csh
-# EA: dj051418 dy051818 rt022718 he042718 jd051818 gl052818
-# CH: hw111117 is060118 mh071418 qh111717 sw050818 tl111017 
-#	  wh071918 xl042618 xz071218 yd081018 yg042518 yl070418 
-#	  yl070518 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518
+
 foreach subject ( test )  
 
 	cd ../data/fmri/${subject}*
@@ -104,6 +101,8 @@ foreach subject ( test )
 	#
 
 	rm -rf anat+orig*
+	rm -rf anat_ns*
+	rm -rf anat.X*
 	rm -rf sid+orig*
 	rm -rf sid_m+orig*
 	rm -rf sid_mb+orig*
