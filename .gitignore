@@ -3,6 +3,8 @@ data/*
 !data/.gitkeep
 
 # ignore everything in bhvr
+!data/bhvr
+data/bhvr/*
 !data/bhvr/.gitkeep
 
 # ignore everything in masks
