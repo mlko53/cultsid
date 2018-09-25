@@ -85,6 +85,9 @@ foreach subject ( ${subjects} )
 
 	rm -rf sid_reg_csfwm+orig*
 	
+	# returns to home directory
+	cd ../../../scripts
+
 end
 
 
@@ -159,4 +162,7 @@ foreach subject ( ${subjects} )
 
 	rm -rf mid_reg_csfwm+orig*
 	
+	# returns to home directory
+	cd ../../../scripts
+
 end

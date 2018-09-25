@@ -191,9 +191,9 @@ def ParseVector(vec, subject):
 		print "Skipping vector because there is no \"INPUT\" file.  (check for missing quotes around filename)"
 		return
 	infile = vecIO[1].strip(" \t\n")
-
+	print os.getcwd()
 	# MK 9.23 - modifly infile csv path to reflect new retructured directory
-	infile = "../../data/bhvr/" + subject + "_" + infile[:3].lower() + '_matrix.csv'
+	infile = "../../bhvr/" + subject + "_" + infile[:3].lower() + '_matrix.csv'
 
 	outKey = vecIO[2].strip(" \t\n:")
 	outfile = ""
