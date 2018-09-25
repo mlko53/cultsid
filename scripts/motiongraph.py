@@ -297,7 +297,7 @@ def subject_dirs(topdir=os.getcwd(), prefixes=[], exclude=[]):
     
 if __name__ == '__main__':
     motionfiles = ['3dmotionsid.1D', '3dmotionmid.1D']
-    os.chdir('../data')
+    os.chdir('../data/fmri')
     datadir = os.getcwd()
     #subjdirs = subject_dirs(topdir=topdir)
     

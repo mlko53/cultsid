@@ -383,7 +383,7 @@ if __name__ == '__main__':
             scriptsdir = os.getcwd()
             topdir = os.path.split(os.getcwd())[0] 
             maskdir = topdir + '/masks'
-            topdir += '/data'
+            topdir += '/data/fmri'
 
             subjectdirs = find_subject_dirs(topdir, subjects)
             print subjectdirs

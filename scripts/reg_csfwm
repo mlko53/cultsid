@@ -22,7 +22,7 @@ echo starting to process SID
 
 foreach subject ( ${subjects} )
 
-    cd ../data/${subject}*
+    cd ../data/fmri/${subject}*
     echo processing ${subject} 
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
@@ -96,7 +96,7 @@ echo starting to process MID
 
 foreach subject ( ${subjects} )
 
-    cd ../${subject}*
+    cd ../data/fmri/${subject}*
     echo processing ${subject} 
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#

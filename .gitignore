@@ -1,11 +1,15 @@
 # ignore everything in data
 data/*
-!data/.gitkeep
 
 # ignore everything in bhvr
 !data/bhvr
 data/bhvr/*
 !data/bhvr/.gitkeep
+
+# ignore everything in fmri
+!data/fmri
+data/fmri/*
+!data/fmri/.gitkeep
 
 # ignore everything in masks
 masks/*

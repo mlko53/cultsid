@@ -5,7 +5,7 @@
 #	  yl070518 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518
 foreach subject ( test )  
 
-	cd ../data/${subject}*
+	cd ../data/fmri/${subject}*
 
 	#------------	
 	# copy and rename anatomical:
