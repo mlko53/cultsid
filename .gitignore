@@ -1,0 +1,15 @@
+# ignore everything in data
+data/*
+!data/.gitkeep
+
+# ignore everything in bhvr
+bhvr/*
+!bhvr/.gitkeep
+
+# ignore everything in masks
+masks/*
+!masks/.gitkeep
+
+# ignore everyting in sid_tcs
+sid_tcs/*
+!sid_tcs/.gitkeep

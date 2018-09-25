@@ -1,0 +1,101 @@
+### All ###
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "ant_sid.1D"
+MARK TR = 1,2 WITH 1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "out_sid.1D"
+MARK TR = 4 WITH 1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "gvnant_sid.1D"
+MARK TR = 1,2 AND
+		trialtype = 4 WITH -1
+MARK TR = 1,2 AND
+		trialtype = 5 WITH 0
+MARK TR = 1,2 AND
+		trialtype = 6 WITH 1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "lvnant_sid.1D"
+MARK TR = 1,2 AND
+                trialtype = 1 WITH -1
+MARK TR = 1,2 AND
+                trialtype = 2 WITH 0
+MARK TR = 1,2 AND
+                trialtype = 3 WITH 1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "hgvnout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 6 AND
+		hit = 1 WITH 1
+MARK TR = 4 AND
+		trialtype = 6 AND
+		hit = 0 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "mgvnout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 5 AND 
+                hit = 1 WITH 1
+MARK TR = 4 AND
+                trialtype = 5 AND
+                hit = 0 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "lgvnout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 4 AND 
+                hit = 1 WITH 1
+MARK TR = 4 AND
+                trialtype = 4 AND
+                hit = 0 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "nvhlout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 3 AND 
+                hit = 1 WITH 1
+MARK TR = 4 AND
+                trialtype = 3 AND
+                hit = 0 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "nvmlout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 2 AND
+                hit = 1 WITH 1
+MARK TR = 4 AND
+                trialtype = 2 AND
+                hit = 0 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "SID_bhvr_scan.csv"
+OUTPUT: "nvllout_sid.1D"
+MARK TR = 4 AND
+                trialtype = 1 AND
+                hit = 1 WITH 1
+MARK TR = 4 AND
+                trialtype = 1 AND
+                hit = 0 WITH -1
+END_VEC

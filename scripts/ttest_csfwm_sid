@@ -1,0 +1,68 @@
+#! /bin/csh
+
+#----------------------------------------------------------------------#
+#		TtestPlus Script
+#		Auto-written by ScriptWriter
+#----------------------------------------------------------------------#
+
+
+
+#------------	
+# adwarp regresions to parent dataset:
+#
+
+foreach subject ( gl052818 he042718 hw111117 is060118 jd051818 qh111717 rt022718 sw050818 tl111017 xl042618 yg042518 yq052218 )
+
+	cd ../${subject}*
+	adwarp -overwrite -apar anat+tlrc. -dpar zsid_reg_csfwm+orig. -dxyz 2.9 -prefix zsid_reg_csfwm
+
+end
+
+
+#------------	
+# prepare files and variables for the ttest:
+#
+
+cd /mnt/c/Users/Michael/fMRI/cultsid/scripts
+@ count = 1
+mkdir -p /mnt/c/Users/Michael/fMRI/cultsid/ttest/sid_n12
+
+
+#------------	
+# set the stats variable to iterate alongside outfiles:
+#
+
+# first six regressors (motion) have 3 each; start at 19
+set stats = ( 19 22 25 28 31 34 )
+
+
+#------------	
+# perform the ttests:
+#
+
+
+#foreach outfile ( csf wm ant out gvnant lvnant hgvnout mgvnout lgvnout nvhlout nvmlout nvllout )
+foreach outfile ( csf wm ant out gvnant lvnant )
+	set stat = $stats[${count}]
+	@ count = $count + 1
+	
+
+	3dttest++ -overwrite -prefix ./${outfile}z -toz -AminusB \
+		-setA \
+                "../gl052818/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../he042718/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../jd051818/zsid_reg_csfwm+tlrc[${stat}]" \
+		"../rt022718/zsid_reg_csfwm+tlrc[${stat}]" \
+        -setB \
+		"../hw111117/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../is060118/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../qh111717/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../sw050818/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../tl111017/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../xl042618/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../yg042518/zsid_reg_csfwm+tlrc[${stat}]" \
+                "../yq052218/zsid_reg_csfwm+tlrc[${stat}]" \
+	
+	mv ${outfile}z* /Users/blevins/Desktop/cultsid/ttest/sid_n12
+
+end

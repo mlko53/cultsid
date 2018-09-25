@@ -1,0 +1,117 @@
+#! /bin/csh
+# EA: dj051418 dy051818 rt022718 he042718 jd051818 gl052818
+# CH: hw111117 is060118 mh071418 qh111717 sw050818 tl111017 
+#	  wh071918 xl042618 xz071218 yd081018 yg042518 yl070418 
+#	  yl070518 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518
+foreach subject ( test )  
+
+	cd ../data/${subject}*
+
+	#------------	
+	# copy and rename anatomical:
+	#
+	
+	3dcopy -overwrite 0006_01_T1w_9mm_BRAVO.nii.gz anat
+
+
+	#------------	
+	# warp anatomical:
+	#
+	
+	@auto_tlrc -warp_orig_vol -suffix NONE -base ~/abin/TT_N27+tlrc. -input anat+orig
+	
+
+	#------------	
+	# cut off leadin/leadout and tshift datasets:
+	#
+	
+	3dTcat -overwrite -prefix epi0 '0004_01_BOLD_EPI_29mm_2sec.nii.gz[6..389]'
+	3dTcat -overwrite -prefix epi1 '0005_01_BOLD_EPI_29mm_2sec.nii.gz[6..389]'
+
+
+	#------------	
+	# refit and slice time correction:
+	#
+
+	3drefit -TR 2.0 epi0+orig.
+	3drefit -TR 2.0 epi1+orig.
+
+	3dTshift -overwrite -slice 0 -tpattern altplus -prefix epi0_ts epi0+orig
+	3dTshift -overwrite -slice 0 -tpattern altplus -prefix epi1_ts epi1+orig
+
+
+	#------------	
+	# tcat functional datasets together:
+	#
+	
+	3dTcat -overwrite -prefix sid epi0_ts+orig
+	3dTcat -overwrite -prefix mid epi1_ts+orig
+	
+
+	#------------	
+	# cleanup epi datasets:
+	#
+
+	rm -rf epi*orig*
+	
+	
+	#------------	
+	# motion correct:
+	#
+
+	3dvolreg -Fourier -twopass -overwrite -prefix sid_m -base 3 -dfile 3dmotionsid.1D sid+orig
+	3dvolreg -Fourier -twopass -overwrite -prefix mid_m -base 3 -dfile 3dmotionmid.1D mid+orig
+
+
+	#------------	
+	# gaussian blur:
+	#
+	
+	3dmerge -overwrite -1blur_fwhm 4 -doall -prefix sid_mb sid_m+orig
+	3dmerge -overwrite -1blur_fwhm 4 -doall -prefix mid_mb mid_m+orig
+
+
+	#------------	
+	# normalize to percent signal change:
+	#
+	
+	3dTstat -overwrite -prefix sid_average sid_mb+orig
+	3dcalc -overwrite -datum float -a sid_mb+orig -b sid_average+orig -expr "((a-b)/b)*100" -prefix sid_mbn
+
+	3dTstat -overwrite -prefix mid_average mid_mb+orig
+	3dcalc -overwrite -datum float -a mid_mb+orig -b mid_average+orig -expr "((a-b)/b)*100" -prefix mid_mbn
+
+
+	#------------	
+	# fourier highpass filter:
+	#
+	
+	rm -rf sid_mbnf+orig*
+	3dFourier -highpass 0.011 -prefix sid_mbnf sid_mbn+orig
+
+	rm -rf mid_mbnf+orig*
+	3dFourier -highpass 0.011 -prefix mid_mbnf mid_mbn+orig
+
+	#------------	
+	# refit functional to anatmomical:
+	#
+	
+	3drefit -apar anat+orig sid_mbnf+orig
+	3drefit -apar anat+orig mid_mbnf+orig
+
+	#------------
+	# remove useless files cuz my memory will rip
+	#
+
+	rm -rf anat+orig*
+	rm -rf sid+orig*
+	rm -rf sid_m+orig*
+	rm -rf sid_mb+orig*
+	rm -rf sid_mbn+orig*
+	rm -rf mid+orig*
+	rm -rf mid_m+orig*
+	rm -rf mid_mb+orig*
+	rm -rf mid_mbn+orig*
+	echo 'deleted useless files'
+
+end
