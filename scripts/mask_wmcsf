@@ -26,7 +26,7 @@ foreach subject ( ${subjects} )
 
 		foreach mask ( ${masks} )
 
-			3dfractionize -overwrite -template ${regfile}+orig -input ../../masks/${mask}+tlrc -warp ${anatfile}+tlrc -clip 0.1 -preserve -prefix ${regfile}_${mask}r+tlrc
+			3dfractionize -overwrite -template ${regfile}+orig -input ../../../masks/${mask}+tlrc -warp ${anatfile}+tlrc -clip 0.1 -preserve -prefix ${regfile}_${mask}r+tlrc
 			
 			if ( -e l${mask}.tc ) then
 				rm l${regfile}_${mask}.1D
