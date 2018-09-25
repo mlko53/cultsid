@@ -193,7 +193,7 @@ def ParseVector(vec, subject):
 	infile = vecIO[1].strip(" \t\n")
 
 	# MK 9.23 - modifly infile csv path to reflect new retructured directory
-	infile = "../../bhvr/" + subject + "_" + infile[:3].lower() + '_matrix.csv'
+	infile = "../../data/bhvr/" + subject + "_" + infile[:3].lower() + '_matrix.csv'
 
 	outKey = vecIO[2].strip(" \t\n:")
 	outfile = ""
