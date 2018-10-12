@@ -7,25 +7,28 @@ import numpy as np
 
 all_subjects = ['test']
 
-onset_vectors = []
-vector_file = ''
+vector_file = 'sid_runs.1D'
 masks = ['nacc8mm','mpfc','acing','caudate','ins','dlpfc','vlpfc','nacc_desai_mpm','antins_desai_mpm']
 
-tr_lag = 10
+#tr_lag = 10
 dataset_name = 'sid_mbnf+orig'
 anat_name = 'anat+tlrc'
 tmp_tc_dir = 'sid_tcs/'
 
+"""
+maskdump output - 
+- area+orig.BRIK
+- sid_tcs
+"""
 
-def make_vectors(subjdirs, scriptsdir, vector_file):
+def make_vectors(subjdir, scriptsdir, vector_file, subject):
     # make the absolute path of the vector file:
     vector_path = os.path.join(scriptsdir, vector_file)
+    makeVec = os.path.join(scriptsdir, 'makeVec.py')
     
-    # iterate over subjects, using makeVec.py to create the onset vectors per
-    # subject:
-    for dir in subjdirs:
-        os.chdir(dir)
-        subprocess.call(['/mnt/c/Users/Michael/fMRI/cultsid/scripts/makeVec.py', vector_path])
+    # call makeVec on one subject
+    os.chdir(subjdir)
+    subprocess.call([makeVec, vector_path, subject])
 
 
 
@@ -110,36 +113,34 @@ def mask_average(subject, mask, dataset_name, tmp_tc_dir):
     
     
         
-def maskdump(topdir, subjdirs, subjects, dataset_name, anat_name, masks,
+def maskdump(topdir, subjdir, subject, dataset_name, anat_name, masks,
              scriptsdir, tmp_tc_dir, maskdir):
     
     # PRINT OUT:
-    print 'mask dump', subjects
+    print 'mask dump ', subject
     
-    # iterate over subjects:
-    for subjdir, subject in zip(subjdirs, subjects):
-        # enter the subject directory:
-        os.chdir(subjdir)
-    
-        # create the directory for raw tc files, if necessary:
-        if not os.path.exists(tmp_tc_dir):
-            os.mkdir(tmp_tc_dir)
-			
-        tcs = glob.glob(os.path.join(tmp_tc_dir,'*.tc'))
-        for tcf in tcs:
-            try:
-                os.remove(tcf)
-            except:
-                pass
+    # maskdump for only 1 subject
+    os.chdir(subjdir)
+
+    # create the directory for raw tc files, if necessary:
+    if not os.path.exists(tmp_tc_dir):
+        os.mkdir(tmp_tc_dir)
 		
+    tcs = glob.glob(os.path.join(tmp_tc_dir,'*.tc'))
+    for tcf in tcs:
+        try:
+            os.remove(tcf)
+        except:
+            pass
+	
+    
+    # iterate over masks:
+    for mask in masks:
+        # fractionize the masks
+        fractionize_mask(mask, dataset_name, anat_name, maskdir)
         
-        # iterate over masks:
-        for mask in masks:
-            # fractionize the masks
-            fractionize_mask(mask, dataset_name, anat_name, maskdir)
-            
-            # create the raw timecourses:
-            mask_average(subject, mask, dataset_name, tmp_tc_dir)
+        # create the raw timecourses:
+        mask_average(subject, mask, dataset_name, tmp_tc_dir)
     
     # return to the topdir (just in case):
     os.chdir(topdir)
@@ -301,8 +302,6 @@ def generate_trial_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vector
         for row in csv_rows:
             cfid.write(row)
 			
-			
-			
                 
 def generate_raw_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vectors):
     # pull sub dict:
@@ -364,14 +363,14 @@ def generate_raw_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vectors)
 
 
 
-def find_subject_dirs(topdir, subjects):
-    subjdirs = []
-    for subject in subjects:
-        print os.path.join(topdir,subject)+'*'
-        dir = glob.glob(os.path.join(topdir,subject)+'*')[0]
-        if dir:
-            subjdirs.append(dir)
-    return subjdirs
+def find_subject_dirs(topdir, subject):
+    # returns folder of 1 subject
+
+    print os.path.join(topdir,subject)+'*'
+    dir = glob.glob(os.path.join(topdir,subject)+'*')[0]
+    if dir:
+        subjdir = dir
+    return subjdir
 
 
 
@@ -379,31 +378,42 @@ if __name__ == '__main__':
     
     s1 = all_subjects
         
-    for output_dir, subjects in zip(['sid_tcs'],[s1]):
+    for output_dir, subject in zip(['sid_tcs'],[s1]):
+
+            # look at only 1 subject
+            subject = subject[0]
+
             scriptsdir = os.getcwd()
             topdir = os.path.split(os.getcwd())[0] 
             maskdir = topdir + '/masks'
             topdir += '/data/fmri'
 
-            subjectdirs = find_subject_dirs(topdir, subjects)
-            print subjectdirs
+            subjectdir = find_subject_dirs(topdir, subject)
+            print subjectdir
         
             if vector_file:
-                make_vectors(subjectdirs, scriptsdir, vector_file)
+                make_vectors(subjectdir, scriptsdir, vector_file, subject)
         
             os.chdir(scriptsdir)
         
-            maskdump(topdir, subjectdirs, subjects, dataset_name, anat_name, masks,
+            maskdump(topdir, subjectdir, subject, dataset_name, anat_name, masks,
                  scriptsdir, tmp_tc_dir, maskdir)
         
-            average_activation(output_dir, scriptsdir, subjectdirs, tmp_tc_dir,
-                           onset_vectors, tr_lag)
+            #average_activation(output_dir, scriptsdir, subjectdirs, tmp_tc_dir,
+            #               onset_vectors, tr_lag)
         
             os.chdir(scriptsdir)
         
         
-    
-    
+# for ever subject
+## make_vectors
+## maskdump
+### fractionize
+### mask_average
+## average_activation
+### create timecourse csvs
+#### generate_raw_avg_csv
+# (generate_trial_avg never used)
     
     
     
