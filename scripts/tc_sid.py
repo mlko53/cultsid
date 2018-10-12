@@ -16,6 +16,16 @@ anat_name = 'anat+tlrc'
 tmp_tc_dir = 'sid_tcs/'
 
 """
+# for ever subject
+## make_vectors
+## maskdump
+### fractionize
+### mask_average
+## average_activation
+### create timecourse csvs
+#### generate_raw_avg_csv
+# (generate_trial_avg never used)
+
 maskdump output - 
 - area+orig.BRIK
 - sid_tcs
@@ -403,17 +413,6 @@ if __name__ == '__main__':
             #               onset_vectors, tr_lag)
         
             os.chdir(scriptsdir)
-        
-        
-# for ever subject
-## make_vectors
-## maskdump
-### fractionize
-### mask_average
-## average_activation
-### create timecourse csvs
-#### generate_raw_avg_csv
-# (generate_trial_avg never used)
     
     
     
