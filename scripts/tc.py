@@ -1,4 +1,3 @@
-
 import glob
 import os
 import subprocess
@@ -7,12 +6,12 @@ import numpy as np
 
 all_subjects = ['test']
 
-vector_file = 'sid_runs.1D'
+vector_file = ['sid_runs.1D', 'mid_runs.1D']
 masks = ['nacc8mm','mpfc','acing','caudate','ins','dlpfc','vlpfc','nacc_desai_mpm','antins_desai_mpm']
 
-dataset_name = 'sid_mbnf+orig'
+dataset_name = ['sid_mbnf+orig', 'mid_mbnf+orig']
 anat_name = 'anat+tlrc'
-tmp_tc_dir = 'sid_tcs/'
+tmp_tc_dir = ['sid_tcs/', 'mid_tcs']
 
 """
 # for ever subject
@@ -38,6 +37,7 @@ def make_vectors(subjdir, scriptsdir, vector_file, subject):
     # call makeVec on one subject
     os.chdir(subjdir)
     subprocess.call([makeVec, vector_path, subject])
+    print 'Completed make_vectors'
 
 
 
@@ -166,31 +166,28 @@ def find_subject_dirs(topdir, subject):
 if __name__ == '__main__':
     
     s1 = all_subjects
-        
-    for output_dir, subject in zip(['sid_tcs'],[s1]):
 
-            # look at only 1 subject
-            subject = subject[0]
+    for i, epi in enumerate(['sid_tcs', 'mid_tcs']):
+        
+        for output_dir, subject in zip([epi],[s1]):
 
-            scriptsdir = os.getcwd()
-            topdir = os.path.split(os.getcwd())[0] 
-            maskdir = topdir + '/masks'
-            topdir += '/data/fmri'
+                # look at only 1 subject
+                subject = subject[0]
 
-            subjectdir = find_subject_dirs(topdir, subject)
-            print subjectdir
-        
-            if vector_file:
-                make_vectors(subjectdir, scriptsdir, vector_file, subject)
-        
-            os.chdir(scriptsdir)
-        
-            maskdump(topdir, subjectdir, subject, dataset_name, anat_name, masks,
-                 scriptsdir, tmp_tc_dir, maskdir)
-        
-            os.chdir(scriptsdir)
-    
-    
-    
-    
-    
+                scriptsdir = os.getcwd()
+                topdir = os.path.split(os.getcwd())[0] 
+                maskdir = topdir + '/masks'
+                topdir += '/data/fmri'
+
+                subjectdir = find_subject_dirs(topdir, subject)
+                print subjectdir
+            
+                if vector_file[i]:
+                    make_vectors(subjectdir, scriptsdir, vector_file[i], subject)
+            
+                os.chdir(scriptsdir)
+            
+                maskdump(topdir, subjectdir, subject, dataset_name[i], anat_name, masks,
+                     scriptsdir, tmp_tc_dir[i], maskdir)
+            
+                os.chdir(scriptsdir)
