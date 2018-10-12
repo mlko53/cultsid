@@ -24,3 +24,11 @@ SID and MID fMRI and behavioral analysis files.
 	* convolve with GAM 
 	* create standardized z score dataset
 3. `ttest` (not ready yet)
+
+## Timecourse Pipeline
+
+1. `tc_sid.py` (not ready)
+	* create individual area TC
+2. `d_sid_tc8tr.R` (not ready)
+3. `d_catsubs_sidtc8tr.R` (not ready)
+4. `p_timecourse_sid.R` (not ready)
