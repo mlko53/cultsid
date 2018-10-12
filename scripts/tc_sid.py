@@ -10,7 +10,6 @@ all_subjects = ['test']
 vector_file = 'sid_runs.1D'
 masks = ['nacc8mm','mpfc','acing','caudate','ins','dlpfc','vlpfc','nacc_desai_mpm','antins_desai_mpm']
 
-#tr_lag = 10
 dataset_name = 'sid_mbnf+orig'
 anat_name = 'anat+tlrc'
 tmp_tc_dir = 'sid_tcs/'
@@ -120,8 +119,6 @@ def mask_average(subject, mask, dataset_name, tmp_tc_dir):
         # move the raw tc file to the tmp tc directory:
         shutil.move(raw_tc, tmp_tc_dir)
         
-    
-    
         
 def maskdump(topdir, subjdir, subject, dataset_name, anat_name, masks,
              scriptsdir, tmp_tc_dir, maskdir):
@@ -154,224 +151,6 @@ def maskdump(topdir, subjdir, subject, dataset_name, anat_name, masks,
     
     # return to the topdir (just in case):
     os.chdir(topdir)
-        
-    
-    
-def parse_tc_file(tc):
-    # returns relevant info about and in tc file
-    
-    # get information on subject, area, and mask form filename:
-    simple_fid = os.path.split(tc)[1]
-    spl_fid = simple_fid.split('_')
-    subject, area, mask = spl_fid[0:3]
-    
-    # get activation out of tc file:
-    fid = open(tc,'r')
-    lines = fid.readlines()
-    fid.close()
-    
-    act = [float(x.strip('\n')) for x in lines]
-    
-    return mask, area, subject, act
-
-
-def parse_onset_file(vecfile):
-    
-    # justify, parse onset vectors for each subject:
-    num_vectors = []
-    fid = open(vecfile,'r')
-    num_vector = [int(x.strip('\n')) for x in (fid.readlines())]
-    fid.close()
-    
-    return num_vector
-
-        
-
-def average_activation(output_dir, scriptsdir, subjdirs, tmp_tc_dir,
-                       onset_vectors, tr_lag):
-    
-    # PRINT OUT:
-    print 'average activation master function'
-    
-    # create tc dict to organize files:
-    tc_dict = {}
-    onset_dict = {}
-    
-    # iterate over subjects:
-    for subjdir in subjdirs:
-        
-        # PRINT OUT:
-        print 'parsing subject', os.path.split(subjdir)[1]
-        
-        # find the tc files in the tmp directory:
-        tc_files = glob.glob(os.path.join(subjdir, tmp_tc_dir, '*.tc'))
-
-        # define the onset files in the subject directory:
-        onset_files = [os.path.join(subjdir,ov+'.1D') for ov in onset_vectors]
-        
-        # parse each tc file:
-        for tc in tc_files:
-            mask, area, subject, act = parse_tc_file(tc)
-            
-            # parse the onset files with the subject name:
-            onset_dict[subject] = {}
-            for onset_name, vecfile in zip(onset_vectors, onset_files):
-                onset_dict[subject][onset_name] = parse_onset_file(vecfile)
-            
-            #add to dict in appropriate section:
-            if mask in tc_dict:
-                if area in tc_dict[mask]:
-                    tc_dict[mask][area][subject] = act
-                else:
-                    tc_dict[mask][area] = {subject:act}
-            else:
-                tc_dict[mask] = {area:{subject:act}}
-        
-            
-        
-    create_timecourse_csvs(tc_dict, onset_dict, output_dir, scriptsdir,
-                           tr_lag, onset_vectors)
-    
-    
-    
-def create_timecourse_csvs(tc_dict, onset_dict, output_dir, scriptsdir,
-                           tr_lag, onset_vectors):
-    
-    # PRINT OUT:
-    print 'create timecourses'
-    
-    # go into the output dir
-    try:
-        os.mkdir(output_dir)
-    except:
-        pass
-    os.chdir(output_dir)
-    print onset_vectors
-    # iterate over the vectors & tc_dict creating csvs:
-    for mask in tc_dict:
-        for area in tc_dict[mask]:
-            generate_raw_avg_csv(tc_dict, onset_dict, mask, area, tr_lag,
-                                 onset_vectors)
-            #generate_trial_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vectors)
-                
-           
-def generate_trial_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vectors):
-	
-	# pull sub dict:
-    subjects_dict = tc_dict[mask][area]
-        
-    # csv dict, by vector name:
-    csv_dict = {}
-    
-    # iterate over the onset vectors
-    for ovec_name in onset_vectors:
-        
-        # PRINT OUT:
-        print 'writing all onset vectors for vector: ', ovec_name
-        
-        csv_rows = []
-        for subject in subjects_dict:
-            # get out the activation for the subject:
-            act = subjects_dict[subject]
-			
-            # do z-scoring of activation:
-            act_mean = np.mean(act)
-            act_std = np.std(act)
-            act = [(x-act_mean)/act_std for x in act]
-            
-            # set up a flexible accumulator, for averaging (there is almost
-            # certainly a better way to do this, but not worth worrying about a.t.m.)
-            accumulator = []
-            #for i in range(tr_lag):
-            #    accumulator.append([])
-                
-            # grab the appropriate number vector file from the onset dict:
-            nvec = onset_dict[subject][ovec_name]
-                
-            # iterate through the nvec indices and the activation, adding to the
-            # accumulator where appropriate according to the lag:
-            for i, ind in enumerate(nvec):
-                if ind == 1:
-                    accumulator.append([])
-                    for j in range(i+3,i+4):
-                        if len(act) > j:
-                            print i, len(accumulator)
-                            accumulator[-1].append(act[j])
-						
-            # average the trs of the accumulator:
-            for i,actlist in enumerate(accumulator):
-                accumulator[i] = sum(actlist)/len(actlist)
-                
-            # create the subject csv row:
-            row = subject+','+','.join([str(x) for x in accumulator])+'\n'
-            csv_rows.append(row)
-            
-        # with the rows, write out the csv:
-        csv_name = area+mask+'_'+ovec_name+'.csv'
-        cfid = open(csv_name,'w')
-        for row in csv_rows:
-            cfid.write(row)
-			
-                
-def generate_raw_avg_csv(tc_dict, onset_dict, mask, area, tr_lag, onset_vectors):
-    # pull sub dict:
-    subjects_dict = tc_dict[mask][area]
-        
-    # csv dict, by vector name:
-    csv_dict = {}
-    
-    # iterate over the onset vectors
-    for ovec_name in onset_vectors:
-        
-        # PRINT OUT:
-        print 'writing all onset vectors for vector: ', ovec_name
-        
-        csv_rows = []
-        for subject in subjects_dict:
-            # get out the activation for the subject:
-            act = subjects_dict[subject]
-
-            #z-scoring
-            act_mean = np.mean(act)
-            act_std = np.std(act)
-            act = [(x-act_mean)/act_std for x in act]
-            
-            # set up a flexible accumulator, for averaging (there is almost
-            # certainly a better way to do this, but not worth worrying about a.t.m.)
-            accumulator = []
-            for i in range(tr_lag):
-                accumulator.append([])
-                
-            # grab the appropriate number vector file from the onset dict:
-            nvec = onset_dict[subject][ovec_name]
-                
-            # iterate through the nvec indices and the activation, adding to the
-            # accumulator where appropriate according to the lag:
-            for i, ind in enumerate(nvec):
-                if ind == 1:
-                    for j,k in zip(range(i,i+tr_lag),range(tr_lag)):
-                        if len(act) > j:
-                            accumulator[k].append(act[j])
-                            
-            # average the trs of the accumulator:
-            for i,actlist in enumerate(accumulator):
-                if len(actlist) > 0:
-                    accumulator[i] = sum(actlist)/len(actlist)
-                else:
-                    accumulator[i] = 0.
-                
-            # create the subject csv row:
-            row = subject+','+','.join([str(x) for x in accumulator])+'\n'
-            csv_rows.append(row)
-            
-        # with the rows, write out the csv:
-        csv_name = area+mask+'_'+ovec_name+'.csv'
-        cfid = open(csv_name,'w')
-        for row in csv_rows:
-            cfid.write(row)
-        
-
-
 
 def find_subject_dirs(topdir, subject):
     # returns folder of 1 subject
@@ -408,9 +187,6 @@ if __name__ == '__main__':
         
             maskdump(topdir, subjectdir, subject, dataset_name, anat_name, masks,
                  scriptsdir, tmp_tc_dir, maskdir)
-        
-            #average_activation(output_dir, scriptsdir, subjectdirs, tmp_tc_dir,
-            #               onset_vectors, tr_lag)
         
             os.chdir(scriptsdir)
     
