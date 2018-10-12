@@ -10,6 +10,13 @@
 #
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-
 
+# reads in SID, MID matrix csv files
+# should output zsid_reg_csfwm+orig
+# also outputs ant, gvnant, hgvnout, lgvnout, mgvnout, nvhlout, nvllout, nvmlout, out
+# copys sid_runs and mid_runs in each participant directory
+
+set script_dir = `pwd`  
+
 #-#-#-#-#-#-#-#-#-#-#-		Subjects					-#-#-#-#-#-#-#-#-#-#-#
 
 set subjects = ( test )
@@ -27,7 +34,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	../../../scripts/makeVec.py ../../../scripts/sid_vecs_full.txt ${subject}
+	python2 $script_dir"/makeVec.py" $script_dir"/sid_vecs_full.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -48,7 +55,7 @@ foreach subject ( ${subjects} )
 		rm -rf sid_reg_csfwm+orig*
 	endif
 	
-	cp -f ../../../scripts/sid_runs.1D ./
+	cp -f $script_dir"/sid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -86,7 +93,7 @@ foreach subject ( ${subjects} )
 	rm -rf sid_reg_csfwm+orig*
 	
 	# returns to home directory
-	cd ../../../scripts
+	cd $script_dir
 
 end
 
@@ -104,7 +111,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	../../../scripts/makeVec.py ../../../scripts/mid_vecs_full.txt ${subject}
+	python2 $script_dir"/makeVec.py" $script_dir"/mid_vecs_full.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -125,7 +132,7 @@ foreach subject ( ${subjects} )
 		rm -rf mid_reg_csfwm+orig*
 	endif
 	
-	cp -f ../../../scripts/mid_runs.1D ./
+	cp -f $script_dir"/mid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -163,6 +170,6 @@ foreach subject ( ${subjects} )
 	rm -rf mid_reg_csfwm+orig*
 	
 	# returns to home directory
-	cd ../../../scripts
+	cd $script_dir
 
 end
