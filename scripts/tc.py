@@ -4,7 +4,12 @@ import subprocess
 import shutil
 import numpy as np
 
-all_subjects = ['test']
+all_subjects = ['dj051418', 'dy051818', 'gl052818', 'he042718', 'hw111117', 
+                'is060118', 'jd051818', 'mh071418', 'qh111717', 'rt022718', 
+                'sw050818', 'tl111017', 'wh071918', 'xl042618', 'xz071218', 
+                'yd081018', 'yg042518', 'yl070418', 'yl070518', 'yl080118', 
+                'yp070418', 'yq052218', 'yw070618', 'yw081018', 'yx072518']
+
 
 vector_file = ['sid_runs.1D', 'mid_runs.1D']
 masks = ['nacc8mm','mpfc','acing','caudate','ins','dlpfc','vlpfc','nacc_desai_mpm','antins_desai_mpm']
@@ -155,7 +160,6 @@ def maskdump(topdir, subjdir, subject, dataset_name, anat_name, masks,
 def find_subject_dirs(topdir, subject):
     # returns folder of 1 subject
 
-    print os.path.join(topdir,subject)+'*'
     dir = glob.glob(os.path.join(topdir,subject)+'*')[0]
     if dir:
         subjdir = dir
@@ -164,15 +168,10 @@ def find_subject_dirs(topdir, subject):
 
 
 if __name__ == '__main__':
-    
-    s1 = all_subjects
 
     for i, epi in enumerate(['sid_tcs', 'mid_tcs']):
         
-        for output_dir, subject in zip([epi],[s1]):
-
-                # look at only 1 subject
-                subject = subject[0]
+        for subject in all_subjects:
 
                 scriptsdir = os.getcwd()
                 topdir = os.path.split(os.getcwd())[0] 
@@ -180,7 +179,7 @@ if __name__ == '__main__':
                 topdir += '/data/fmri'
 
                 subjectdir = find_subject_dirs(topdir, subject)
-                print subjectdir
+                print "Looking into:    " + subjectdir
             
                 if vector_file[i]:
                     make_vectors(subjectdir, scriptsdir, vector_file[i], subject)
