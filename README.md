@@ -29,6 +29,6 @@ SID and MID fMRI and behavioral analysis files.
 
 1. `tc.py` 
 	* create individual area TC
-2. `d_sid_tc8tr.R` (not ready)
-3. `d_catsubs_sidtc8tr.R` (not ready)
-4. `p_timecourse_sid.R` (not ready)
+2. `tc_agg.R` 
+	* aggregate individual timecourses to master timecourse CSV
+3. `p_timecourse_sid.R` (not ready)
