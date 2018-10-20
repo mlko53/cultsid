@@ -1,15 +1,27 @@
+### NOTES ###
+# I am missing kt082818 fMRI
+# mh071418's ethn_r row is missing
+
+# packages
+library(tibble)
+
+missing_mid_CH = c('mh071418', 'wh071918', 'xz071218', 'yd081018', 'yl070418', 
+                'yl070518', 'yl080118', 'yp070418', 'yw070618', 'yw081018', 
+                'yx072518')
+missing_mid_EA = c('ac081918', 'kt082818', 'mp083018')
+
 ########### Create  SID/MID matrix with ROI for each participant ##############
 scripts_dir = getwd()
 
 #### subject list ####
-subvec = c('dj051418', 'dy051818', 'gl052818', 'he042718', 'hw111117', 
+subjects = c('dj051418', 'dy051818', 'gl052818', 'he042718', 'hw111117', 
                 'is060118', 'jd051818', 'mh071418', 'qh111717', 'rt022718', 
                 'sw050818', 'tl111017', 'wh071918', 'xl042618', 'xz071218', 
                 'yd081018', 'yg042518', 'yl070418', 'yl070518', 'yl080118', 
                 'yp070418', 'yq052218', 'yw070618', 'yw081018', 'yx072518')
 
 #### epi list ####
-epi = c('sid', 'mid')
+epi = c('mid', 'sid')
 
 #### create dataframe to store values ####
 d.f=data.frame(
@@ -27,18 +39,24 @@ d.f=data.frame(
 
 for(task in epi){
   #### for each subject ####
-  for (i in 1:length(subvec)){
+  for (sub in subjects){
+    print(paste0('Processing ', sub))
     # construct filenames to load data
-    matrix_filename = paste0(dirname(scripts_dir), '/data/bhvr/', subvec[i], '_', task,'_matrix.csv')
-    write_fullskewmat_filename = paste0(dirname(scripts_dir), '/output/', task, '_tcs/', subvec[i],'_', task, 'tc8tr.csv')
+    matrix_filename = paste0(dirname(scripts_dir), '/data/bhvr/', sub, '_', task,'_matrix.csv')
+    write_fullskewmat_filename = paste0(dirname(scripts_dir), '/output/', task, '_tcs/', sub,'_', task, 'tc8tr.csv')
     
     filenames = c()
     for (roi in 1:length(colnames(d.f))){
-      filenames[roi] = paste0(dirname(scripts_dir), '/data/fmri/', subvec[i], '/', task, '_tcs/', subvec[i],"_",colnames(d.f)[roi])
+      filenames[roi] = paste0(dirname(scripts_dir), '/data/fmri/', sub, '/', task, '_tcs/', sub,"_",colnames(d.f)[roi])
     }
     
     # load matrix into dataframe
     d.mat = read.csv(matrix_filename, head=T)
+
+    # fix missing columns
+    if(task == 'mid' & sub %in% missing_mid_CH){
+      d.mat <- add_column(d.mat, ethni_r = 1, .after = 'TR')
+    }
 
     # load time courses
     dataframenames = c()
@@ -48,12 +66,11 @@ for(task in epi){
     
     # append time courses into data frame
     timecourses = data.frame(matrix(nrow=384,ncol=length(colnames(d.f))))
-    timecourses[,1] = rep(subvec[i],384)
+    timecourses[,1] = rep(sub,384)
     for (tc in 2:length(colnames(d.f))){
       timecourses[,tc] = read.table(filenames[tc])
     }
     colnames(timecourses) = colnames(d.f) # get ROI for colnames
-    
     # 4 TR's of interest per trial (*2 seconds per TR), so we want 8 TR's per trial, 64*8=512
     tc512 = cbind(d.mat, timecourses)
     # make each trial 8 TRs long, with proper trial number, condition, etc.
@@ -104,7 +121,7 @@ for(task in epi){
 ###### Concat all the subjects together ################
 for(task in epi){
   d = c()
-  for(sub in subvec){
+  for(sub in subjects){
     loadfilename = paste0('../output/',task, '_tcs/', sub, '_', task, 'tc8tr.csv')
     temp_d = read.csv(loadfilename, head=T)
     d = rbind(d, temp_d)
