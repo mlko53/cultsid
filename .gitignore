@@ -18,3 +18,7 @@ masks/*
 # ignore everyting in sid_tcs
 sid_tcs/*
 !sid_tcs/.gitkeep
+
+# ignore R history and data files
+*.Rhistory
+*.RData
