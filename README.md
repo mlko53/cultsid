@@ -32,4 +32,4 @@ SID and MID fMRI and behavioral analysis files.
 2. `tc_agg.R` 
 	* aggregate individual timecourses to master timecourse CSV
 3. `plot_timecourse.R`
-	* main command 'plotTC(task, area, val, outcome, invW=F)'
+	* main command `plotTC(task, area, val, outcome, invW=F)`
