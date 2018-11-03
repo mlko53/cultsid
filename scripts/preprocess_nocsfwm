@@ -1,20 +1,21 @@
 #! /bin/csh
 #set subjects = ( dj051418 dy051818 gl052818 he042718 hw111117 is060118 jd051818 mh071418 qh111717 rt022718 sw050818 tl111017 wh071918 xl042618 xz071218 yd081018 yg042518 yl070418 yl070518 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 )
+# files in the old data directory structure ac081918
 # New subjects with new data directory structure
 # set subjects = ( 'ch102218' 'hc101818' 'jk102518' 'js101518' 'lh102418' 'lp102118' 'nb102318' 'sh101518' )
 set subjects = ( 'ch102218' )
 
-set var = `pwd`  
+set script_dir = `pwd` 
+ 
 foreach subject ( ${subjects} )  
 
 	cd ../data/fmri/${subject}*
 
 	#------------	
 	# copy and rename anatomical:
-	#
-	
-	3dcopy -overwrite 0006_01_T1w_9mm_BRAVO.nii.gz anat
-
+	#i
+	set t1_dir = T1/*.gz
+	3dcopy -overwrite "${t1_dir}" anat
 
 	#------------	
 	# warp anatomical:
@@ -26,9 +27,11 @@ foreach subject ( ${subjects} )
 	#------------	
 	# cut off leadin/leadout and tshift datasets:
 	#
-	
-	3dTcat -overwrite -prefix epi0 '0004_01_BOLD_EPI_29mm_2sec.nii.gz[6..389]'
-	3dTcat -overwrite -prefix epi1 '0005_01_BOLD_EPI_29mm_2sec.nii.gz[6..389]'
+
+	set epi0_dir = EPI0/*.gz	
+	set epi1_dir = EPI1/*.gz
+	3dTcat -overwrite -prefix epi0 "${epi0_dir}[6..389]"
+	3dTcat -overwrite -prefix epi1 "${epi1_dir}[6..389]"
 
 
 	#------------	
@@ -118,6 +121,6 @@ foreach subject ( ${subjects} )
 	rm -rf mid_mbn+orig*
 	echo 'deleted useless files'
 
-	cd $var
+	cd $script_dir
 
 end
