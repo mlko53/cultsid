@@ -13,8 +13,8 @@ require("stringr")
 library("Hmisc")
 
 # exclude list
-exclude = c('dj051418', 'dy051818', 'wh071918')
-borderline_exclude = c('tl111017', 'hw111117')
+exclude = c('dj051418', 'dy051818', 'sh101518', 'wh071918', 'hc101818')
+borderline_exclude = c('jk102518','tl111017', 'hw111117')
 
 sid.tc = read.csv('../output/sid_tcs/sid_timecourse.csv', head=T)
 
@@ -118,127 +118,65 @@ mid.tc <- mid.tc[c('trial','TR','trialtype','subject','ethni_r','hit',
                        'l_vlpfc_raw.tc','r_vlpfc_raw.tc',
                        'l_caudate_raw.tc','r_caudate_raw.tc')]
 
+# format data columns
+mid.tc = mid.tc %>%
+  # convert ethnicity to factor and recode 
+  mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
+  mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
+  # convert trialtype to factor and recode
+  mutate(trialtype = factor(trialtype, levels = c("1","2","3","4","5","6","7","8"))) %>%
+  mutate(trialtype = fct_recode(trialtype,
+                                  "lan"= "1", "man" = "2", "han" = "3",
+                                  "lap"= "4", "map" = "5", "hap" = "6",
+                                  "neun" = "7", "neup" = "8"))
+
+# convert to factors
+mid.tc$hit = as.factor(mid.tc$hit)
+mid.tc$hit = fct_recode(mid.tc$hit, "miss" = "0", "hit" = "1")
+
 ####### Tidy Data #######
 #########################
 
+# convert to long form
 mid.tc.long.sum.bin = mid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
   group_by(TR, trialtype, variable, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value))) %>%
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject)))) %>%
-  # convert ethnicity to factor and recode
-  mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
-  mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
-  # convert trialtype to factor and recode
-  mutate(trialtype_f = factor(trialtype, levels = c("1","2","3","4","5","6","7","8"))) %>%
-  mutate(trialtype_f = fct_recode(trialtype_f,
-                                  "lan"= "1", "man" = "2", "han" = "3",
-                                  "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8")) %>%
+            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
   # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype_f) ~ 'neg',
-                          grepl("p$", trialtype_f) ~ 'pos')) %>%
+  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
+                          grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
                           grepl("r_", variable) ~ 'right'))
 
-# convert to long form
 mid.tc.long.sum = mid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
   group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value))) %>%
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject)))) %>%
-  # convert ethnicity to factor and recode
-  mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
-  mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
-  # convert trialtype to factor and recode
-  mutate(trialtype_f = factor(trialtype, levels = c("1","2","3","4","5","6","7","8"))) %>%
-  mutate(trialtype_f = fct_recode(trialtype_f,
-                                  "lan"= "1", "man" = "2", "han" = "3",
-                                  "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8")) %>%
+            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
   # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype_f) ~ 'neg',
-                          grepl("p$", trialtype_f) ~ 'pos')) %>%
+  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
+                            grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
                           grepl("r_", variable) ~ 'right'))
 
-# convert to factors
 mid.tc.long.sum.bin$vale = as.factor(mid.tc.long.sum.bin$vale)
 mid.tc.long.sum.bin$variable = as.factor(mid.tc.long.sum.bin$variable)
-mid.tc.long.sum.bin$variable = substr(mid.tc.long.sum.bin$variable, start = 3, stop = str_length(mid.tc.long.sum.bin$variable))
+mid.tc.long.sum.bin$variable = substr(mid.tc.long.sum.bin$variable, start = 3, stop = 999)
 
 mid.tc.long.sum$vale = as.factor(mid.tc.long.sum$vale)
 mid.tc.long.sum$variable = as.factor(mid.tc.long.sum$variable)
-mid.tc.long.sum$variable = substr(mid.tc.long.sum$variable, start = 3, stop = str_length(mid.tc.long.sum$variable))
-mid.tc.long.sum$hit = as.factor(mid.tc.long.sum$hit)
-mid.tc.long.sum$hit = fct_recode(mid.tc.long.sum$hit,
-                               "miss" = "0", "hit" = "1")
-
-# Created inverse weighted variance dataframes
-
-mid.tc.long.sum.bin.inv = mid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            var.subject = var(value)) %>%
-  summarise(mean = wtd.mean(mean.subject, 1/var.subject),
-            se.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
-  # convert ethnicity to factor and recode
-  mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
-  mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
-  # convert trialtype to factor and recode
-  mutate(trialtype_f = factor(trialtype, levels = c("1","2","3","4","5","6","7","8"))) %>%
-  mutate(trialtype_f = fct_recode(trialtype_f,
-                                  "lan"= "1", "man" = "2", "han" = "3",
-                                  "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8")) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype_f) ~ 'neg',
-                          grepl("p$", trialtype_f) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
-
-mid.tc.long.sum.inv = mid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            var.subject = var(value)) %>%
-  summarise(mean = wtd.mean(mean.subject, 1/var.subject),
-            se.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
-  # convert ethnicity to factor and recode
-  mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
-  mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
-  # convert trialtype to factor and recode
-  mutate(trialtype_f = factor(trialtype, levels = c("1","2","3","4","5","6","7","8"))) %>%
-  mutate(trialtype_f = fct_recode(trialtype_f,
-                                  "lan"= "1", "man" = "2", "han" = "3",
-                                  "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8")) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype_f) ~ 'neg',
-                          grepl("p$", trialtype_f) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
-
-# convert to factors
-mid.tc.long.sum.bin.inv$vale = as.factor(mid.tc.long.sum.bin.inv$vale)
-mid.tc.long.sum.bin.inv$variable = as.factor(mid.tc.long.sum.bin.inv$variable)
-mid.tc.long.sum.bin.inv$variable = substr(mid.tc.long.sum.bin.inv$variable, start = 3, stop = str_length(mid.tc.long.sum.bin.inv$variable))
-
-mid.tc.long.sum.inv$vale = as.factor(mid.tc.long.sum.inv$vale)
-mid.tc.long.sum.inv$variable = as.factor(mid.tc.long.sum.inv$variable)
-mid.tc.long.sum.inv$variable = substr(mid.tc.long.sum.inv$variable, start = 3, stop = str_length(mid.tc.long.sum.inv$variable))
-mid.tc.long.sum.inv$hit = as.factor(mid.tc.long.sum.inv$hit)
-mid.tc.long.sum.inv$hit = fct_recode(mid.tc.long.sum.inv$hit,
-                               "miss" = "0", "hit" = "1")
+mid.tc.long.sum$variable = substr(mid.tc.long.sum$variable, start = 3, stop = 999) 
 
 ## Plotting Functions ###
 
