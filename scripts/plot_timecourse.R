@@ -60,9 +60,11 @@ sid.tc.long.sum.bin = sid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
   group_by(TR, trialtype, variable, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value))) %>%
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject)))) %>%
+            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
   # add column for valence
   mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
                           grepl("p$", trialtype) ~ 'pos')) %>%
@@ -74,9 +76,11 @@ sid.tc.long.sum = sid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
   group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value))) %>%
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject)))) %>%
+            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
   # add column for valence
   mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
                             grepl("p$", trialtype) ~ 'pos')) %>%
@@ -91,44 +95,6 @@ sid.tc.long.sum.bin$variable = substr(sid.tc.long.sum.bin$variable, start = 3, s
 sid.tc.long.sum$vale = as.factor(sid.tc.long.sum$vale)
 sid.tc.long.sum$variable = as.factor(sid.tc.long.sum$variable)
 sid.tc.long.sum$variable = substr(sid.tc.long.sum$variable, start = 3, stop = 999) 
-
-# Created inverse weighted variance dataframes
-sid.tc.long.sum.bin.inv = sid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            var.subject = var(value)) %>%
-  summarise(mean = wtd.mean(mean.subject, 1/var.subject),
-            se.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
-                            grepl("p$", trialtype) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
-
-sid.tc.long.sum.inv = sid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            var.subject = var(value)) %>%
-  summarise(mean = wtd.mean(mean.subject, 1/var.subject),
-            se.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
-                            grepl("p$", trialtype) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
-
-# convert to factors
-sid.tc.long.sum.bin.inv$vale = as.factor(sid.tc.long.sum.bin.inv$vale)
-sid.tc.long.sum.bin.inv$variable = as.factor(sid.tc.long.sum.bin.inv$variable)
-sid.tc.long.sum.bin.inv$variable = substr(sid.tc.long.sum.bin.inv$variable, start = 3, stop = 999)
-
-sid.tc.long.sum.inv$vale = as.factor(sid.tc.long.sum.inv$vale)
-sid.tc.long.sum.inv$variable = as.factor(sid.tc.long.sum.inv$variable)
-sid.tc.long.sum.inv$variable = substr(sid.tc.long.sum.inv$variable, start = 3, stop = 999)
 
 ## Read and Precompute MID csv
 
@@ -278,34 +244,18 @@ mid.tc.long.sum.inv$hit = fct_recode(mid.tc.long.sum.inv$hit,
 
 plotTC = function(task, area, val, outcome, invW=FALSE){
   if(task == 'sid'){
-    if(invW == TRUE){
+      if(outcome == 'both'){
+          p <- plotBin(sid.tc.long.sum.bin, area, val, invW)
+        } else{
+          p <- plotInd(sid.tc.long.sum, area, val, outcome, invW)
+      }
+  } else{
         if(outcome == 'both'){
-            p <- plotBin(sid.tc.long.sum.bin.inv, area, val)
+            p <- plotBin(mid.tc.long.sum.bin, area, val)
           } else{
-            p <- plotInd(sid.tc.long.sum.inv, area, val, outcome)
-          }
-      } else{
-        if(outcome == 'both'){
-            p <- plotBin(sid.tc.long.sum.bin, area, val)
-          } else{
-            p <- plotInd(sid.tc.long.sum, area, val, outcome)
+            p <- plotInd(mid.tc.long.sum, area, val, outcome)
           }
       }
-    } else{
-      if(invW == TRUE){
-          if(outcome == 'both'){
-              p <- plotBin(mid.tc.long.sum.bin.inv, area, val)
-            } else{
-              p <- plotInd(mid.tc.long.sum.inv, area, val, outcome)
-            }
-        } else{
-          if(outcome == 'both'){
-              p <- plotBin(mid.tc.long.sum.bin, area, val)
-            } else{
-              p <- plotInd(mid.tc.long.sum, area, val, outcome)
-            }
-    }
-    }
   return(p)
 }
 
@@ -316,13 +266,17 @@ savePlot = function(p, name, path){
   return()
 }
 
-plotBin = function(d, area, val){
+plotBin = function(d, area, val, invW){
   d1 = d %>%
     filter(variable == area & vale == val)
-  d1$trialtype = factor(d1$trialtype)
+  if(invW == TRUE){
+    d1 = d1 %>% mutate(se = se.inv.mean)
+  } else{
+    d1 = d1 %>% mutate(se = se.mean)
+  }
   tcplot = ggplot(
     d1, aes(x = TR, y = mean, group = trialtype, shape = trialtype)) + 
-    geom_errorbar(aes(ymin = mean-se.mean, ymax = mean+se.mean), width = 0.25) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width = 0.25) +
     geom_line(aes(linetype = trialtype, colour = trialtype), size = 1) +
     geom_point(aes(shape = trialtype, colour = trialtype, fill = trialtype), size = 3.5, shape = 21) +
     scale_fill_manual(values = c("#91bfdb","#ff9326","#e41a1c","#bdbdbd")) +
@@ -340,12 +294,17 @@ plotBin = function(d, area, val){
   return(tcplot)
 }
 
-plotInd = function(d, area, val, outcome){
+plotInd = function(d, area, val, outcome, invW){
   d1 = d %>%
     filter(variable == area & hit == outcome & vale == val)
+  if(invW == TRUE){
+    d1 = d1 %>% mutate(se = se.inv.mean)
+  } else{
+    d1 = d1 %>% mutate(se = se.mean)
+  }
   tcplot = ggplot(
     d1, aes(x = TR, y = mean, group = trialtype, shape = trialtype)) + 
-    geom_errorbar(aes(ymin = mean-se.mean, ymax = mean+se.mean), width = 0.25) +
+    geom_errorbar(aes(ymin = mean-se, ymax = mean+se), width = 0.25) +
     geom_line(aes(linetype = trialtype, colour = trialtype), size = 1) +
     geom_point(aes(shape = trialtype, colour = trialtype, fill = trialtype), size = 3.5, shape = 21) +
     scale_fill_manual(values = c("#91bfdb","#ff9326","#e41a1c","#bdbdbd")) +
