@@ -37,7 +37,7 @@ sid.tc <- sid.tc[c('trial','TR','trialtype','subject','ethni_r','hit',
                        'l_caudate_raw.tc','r_caudate_raw.tc', 'b_caudate_raw.tc')]
 
 # format data columns
-sid.tc = sid.tc %>%
+sid.tc.long = sid.tc %>%
   # convert ethnicity to factor and recode 
   mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
   mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
@@ -46,25 +46,8 @@ sid.tc = sid.tc %>%
   mutate(trialtype = fct_recode(trialtype,
                                   "lan"= "1", "man" = "2", "han" = "3",
                                   "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8"))
-
-# convert to factors
-sid.tc$hit = as.factor(sid.tc$hit)
-sid.tc$hit = fct_recode(sid.tc$hit, "miss" = "0", "hit" = "1")
-
-####### Tidy Data #######
-#########################
-
-# convert to long form
-sid.tc.long.sum.bin = sid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value)),
-            var.subject = var(value)) %>%
-  summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
-            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
+                                  "neun" = "7", "neup" = "8")) %>%
+  gather(variable, value, l_nacc8mm_raw.tc:b_caudate_raw.tc) %>%
   # add column for valence
   mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
                           grepl("p$", trialtype) ~ 'pos')) %>%
@@ -73,30 +56,34 @@ sid.tc.long.sum.bin = sid.tc %>%
                           grepl("r_", variable) ~ 'right',
   						  grepl("b_", variable) ~ 'both'))
 
-sid.tc.long.sum = sid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
+# convert to factors
+sid.tc.long$hit = as.factor(sid.tc.long$hit)
+sid.tc.long$hit = fct_recode(sid.tc.long$hit, "miss" = "0", "hit" = "1")
+sid.tc.long$vale = as.factor(sid.tc.long$vale)
+sid.tc.long$variable = as.factor(sid.tc.long$variable)
+sid.tc.long$variable = substr(sid.tc.long$variable, start = 3, stop = 999)
+
+####### Tidy Data #######
+#########################
+
+# convert to long form
+sid.tc.long.sum.bin = sid.tc.long %>%
+  group_by(TR, trialtype, vale, variable, hemi, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
             se.subject = sd(value)/sqrt(length(value)),
             var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
             se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
-            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject)))) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
-                            grepl("p$", trialtype) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right',
-                          grepl("b_", variable) ~ 'both'))
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject))))
 
-sid.tc.long.sum.bin$vale = as.factor(sid.tc.long.sum.bin$vale)
-sid.tc.long.sum.bin$variable = as.factor(sid.tc.long.sum.bin$variable)
-sid.tc.long.sum.bin$variable = substr(sid.tc.long.sum.bin$variable, start = 3, stop = 999)
-
-sid.tc.long.sum$vale = as.factor(sid.tc.long.sum$vale)
-sid.tc.long.sum$variable = as.factor(sid.tc.long.sum$variable)
-sid.tc.long.sum$variable = substr(sid.tc.long.sum$variable, start = 3, stop = 999) 
+sid.tc.long.sum = sid.tc.long %>%
+  group_by(TR, trialtype, vale, variable, hemi, hit, ethni_r, subject) %>%
+  summarise(mean.subject = mean(value),
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
+  summarise(mean = mean(mean.subject),
+            se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject))))
 
 ## Read and Precompute MID csv
 
@@ -121,7 +108,7 @@ mid.tc <- mid.tc[c('trial','TR','trialtype','subject','ethni_r','hit',
                        'l_caudate_raw.tc','r_caudate_raw.tc', 'b_caudate_raw.tc')]
 
 # format data columns
-mid.tc = mid.tc %>%
+mid.tc.long = mid.tc %>%
   # convert ethnicity to factor and recode 
   mutate(ethni_r = factor(ethni_r, levels = c("0","1"))) %>%
   mutate(ethni_r = fct_recode(ethni_r, "EA"= "0", "CH" = "1")) %>%
@@ -130,25 +117,8 @@ mid.tc = mid.tc %>%
   mutate(trialtype = fct_recode(trialtype,
                                   "lan"= "1", "man" = "2", "han" = "3",
                                   "lap"= "4", "map" = "5", "hap" = "6",
-                                  "neun" = "7", "neup" = "8"))
-
-# convert to factors
-mid.tc$hit = as.factor(mid.tc$hit)
-mid.tc$hit = fct_recode(mid.tc$hit, "miss" = "0", "hit" = "1")
-
-####### Tidy Data #######
-#########################
-
-# convert to long form
-mid.tc.long.sum.bin = mid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, ethni_r, subject) %>%
-  summarise(mean.subject = mean(value),
-            se.subject = sd(value)/sqrt(length(value)),
-            var.subject = var(value)) %>%
-  summarise(mean = mean(mean.subject),
-            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject))),
-            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
+                                  "neun" = "7", "neup" = "8")) %>%
+  gather(variable, value, l_nacc8mm_raw.tc:b_caudate_raw.tc) %>%
   # add column for valence
   mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
                           grepl("p$", trialtype) ~ 'pos')) %>%
@@ -157,30 +127,34 @@ mid.tc.long.sum.bin = mid.tc %>%
                           grepl("r_", variable) ~ 'right',
   						  grepl("b_", variable) ~ 'both'))
 
-mid.tc.long.sum = mid.tc %>%
-  gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
-  group_by(TR, trialtype, variable, hit, ethni_r, subject) %>%
+# convert to factors
+mid.tc.long$hit = as.factor(mid.tc.long$hit)
+mid.tc.long$hit = fct_recode(mid.tc.long$hit, "miss" = "0", "hit" = "1")
+mid.tc.long$vale = as.factor(mid.tc.long$vale)
+mid.tc.long$variable = as.factor(mid.tc.long$variable)
+mid.tc.long$variable = substr(mid.tc.long$variable, start = 3, stop = 999)
+
+####### Tidy Data #######
+#########################
+
+# convert to long form
+mid.tc.long.sum.bin = mid.tc.long %>%
+  group_by(TR, trialtype, vale, variable, hemi, ethni_r, subject) %>%
   summarise(mean.subject = mean(value),
             se.subject = sd(value)/sqrt(length(value)),
             var.subject = var(value)) %>%
   summarise(mean = mean(mean.subject),
             se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject))),
-            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject)))) %>%
-  # add column for valence
-  mutate(vale = case_when(grepl("n$", trialtype) ~ 'neg',
-                            grepl("p$", trialtype) ~ 'pos')) %>%
-  # add column for hemisphere
-  mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right',
-  						  grepl("b_", variable) ~ 'both'))
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject))))
 
-mid.tc.long.sum.bin$vale = as.factor(mid.tc.long.sum.bin$vale)
-mid.tc.long.sum.bin$variable = as.factor(mid.tc.long.sum.bin$variable)
-mid.tc.long.sum.bin$variable = substr(mid.tc.long.sum.bin$variable, start = 3, stop = 999)
-
-mid.tc.long.sum$vale = as.factor(mid.tc.long.sum$vale)
-mid.tc.long.sum$variable = as.factor(mid.tc.long.sum$variable)
-mid.tc.long.sum$variable = substr(mid.tc.long.sum$variable, start = 3, stop = 999) 
+mid.tc.long.sum = mid.tc.long %>%
+  group_by(TR, trialtype, vale, variable, hemi, hit, ethni_r, subject) %>%
+  summarise(mean.subject = mean(value),
+            se.subject = sd(value)/sqrt(length(value)),
+            var.subject = var(value)) %>%
+  summarise(mean = mean(mean.subject),
+            se.mean = sd(mean.subject)/sqrt(length(unique(mid.tc$subject))),
+            se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(mid.tc$subject))))
 
 ## Plotting Functions ###
 
@@ -292,35 +266,29 @@ plotHVM = function(d, area, val){
 ####### Plot Bar ########
 #########################
 
-plotBar = function(task, area, side, val, outcome, TR){
+plotBar = function(task, area, val, outcome, TR){
     if(task=="sid"){
-        df = sid.tc.long.sum
+        df = sid.tc.long
     } else{
         if(task=="mid"){
-            df = mid.tc.long.sum
+            df = mid.tc.long
         }
     }
     df = df %>%
         filter(variable == area & vale == val & TR == TR)
-    # select area
-    if(side=="both"){
-        df = df %>% 
-            group_by(ethni_r, trialtype_f, hit) %>%
-            summarise(mean = mean(mean))
-    } else{
-        df = df %>%
-            filter(hemi==side)
+    if(outcome!="both"){
+    	df = df %>%
+    		filter(hit==outcome)
     }
-    # select outcome
-    if(outcome=="area"){
-        df = df %>%
-            group_by(ethni_r, trialtype_f) %>%
-            summarise(mean = mean(mean))
-    } else{
-        df = df %>%
-            filter(hit==outcome)
-    }
-    return(df)
+    df = df %>% 
+    	group_by(ethni_r, trialtype, hemi) %>% 
+    	summarise(se.value=se(value), value=mean(value))
+    p = ggplot(df, aes(trialtype, value, fill=ethni_r)) + 
+    	geom_bar(stat='identity', position='dodge') + 
+    	geom_errorbar(aes(ymin=value-se.value, ymax=value+se.value), position=position_dodge(.9), width=.2) +
+    	facet_grid(.~hemi)
+
+    return(p)
 }
 
 ####### Plot Data #######
