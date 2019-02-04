@@ -193,9 +193,9 @@ plotTC = function(task, area, val, outcome, invW=FALSE){
       }
   } else{
         if(outcome == 'both'){
-            p <- plotBin(mid.tc.long.sum.bin, area, val)
+            p <- plotBin(mid.tc.long.sum.bin, area, val, invW)
           } else{
-            p <- plotInd(mid.tc.long.sum, area, val, outcome)
+            p <- plotInd(mid.tc.long.sum, area, val, outcome, invW)
           }
       }
   return(p)
