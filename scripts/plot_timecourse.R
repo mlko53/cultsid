@@ -26,15 +26,15 @@ sid.tc$subject = droplevels(sid.tc$subject)
 
 # reoder columns and drop unnecessary variables
 sid.tc <- sid.tc[c('trial','TR','trialtype','subject','ethni_r','hit',
-                       'l_nacc8mm_raw.tc','r_nacc8mm_raw.tc',
-                       'l_nacc_desai_mpm_raw.tc','r_nacc_desai_mpm_raw.tc',
-                       'l_ins_raw.tc','r_ins_raw.tc',
-                       'l_antins_desai_mpm_raw.tc','r_antins_desai_mpm_raw.tc',
-                       'l_mpfc_raw.tc','r_mpfc_raw.tc',
-                       'l_dlpfc_raw.tc','r_dlpfc_raw.tc',
-                       'l_acing_raw.tc','r_acing_raw.tc',
-                       'l_vlpfc_raw.tc','r_vlpfc_raw.tc',
-                       'l_caudate_raw.tc','r_caudate_raw.tc')]
+                       'l_nacc8mm_raw.tc','r_nacc8mm_raw.tc', 'b_nacc8mm_raw.tc',
+                       'l_nacc_desai_mpm_raw.tc','r_nacc_desai_mpm_raw.tc', 'b_nacc_desai_mpm_raw.tc',
+                       'l_ins_raw.tc','r_ins_raw.tc', 'b_ins_raw.tc',
+                       'l_antins_desai_mpm_raw.tc','r_antins_desai_mpm_raw.tc', 'b_antins_desai_mpm_raw.tc',
+                       'l_mpfc_raw.tc','r_mpfc_raw.tc', 'b_mpfc_raw.tc',
+                       'l_dlpfc_raw.tc','r_dlpfc_raw.tc', 'b_dlpfc_raw.tc',
+                       'l_acing_raw.tc','r_acing_raw.tc', 'b_acing_raw.tc',
+                       'l_vlpfc_raw.tc','r_vlpfc_raw.tc', 'b_vlpfc_raw.tc',
+                       'l_caudate_raw.tc','r_caudate_raw.tc', 'b_caudate_raw.tc')]
 
 # format data columns
 sid.tc = sid.tc %>%
@@ -70,7 +70,8 @@ sid.tc.long.sum.bin = sid.tc %>%
                           grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
+                          grepl("r_", variable) ~ 'right',
+  						  grepl("b_", variable) ~ 'both'))
 
 sid.tc.long.sum = sid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
@@ -86,7 +87,8 @@ sid.tc.long.sum = sid.tc %>%
                             grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
+                          grepl("r_", variable) ~ 'right',
+                          grepl("b_", variable) ~ 'both'))
 
 sid.tc.long.sum.bin$vale = as.factor(sid.tc.long.sum.bin$vale)
 sid.tc.long.sum.bin$variable = as.factor(sid.tc.long.sum.bin$variable)
@@ -108,15 +110,15 @@ mid.tc$subject = droplevels(mid.tc$subject)
 
 # reoder columns and drop unnecessary variables
 mid.tc <- mid.tc[c('trial','TR','trialtype','subject','ethni_r','hit',
-                       'l_nacc8mm_raw.tc','r_nacc8mm_raw.tc',
-                       'l_nacc_desai_mpm_raw.tc','r_nacc_desai_mpm_raw.tc',
-                       'l_ins_raw.tc','r_ins_raw.tc',
-                       'l_antins_desai_mpm_raw.tc','r_antins_desai_mpm_raw.tc',
-                       'l_mpfc_raw.tc','r_mpfc_raw.tc',
-                       'l_dlpfc_raw.tc','r_dlpfc_raw.tc',
-                       'l_acing_raw.tc','r_acing_raw.tc',
-                       'l_vlpfc_raw.tc','r_vlpfc_raw.tc',
-                       'l_caudate_raw.tc','r_caudate_raw.tc')]
+                       'l_nacc8mm_raw.tc','r_nacc8mm_raw.tc', 'b_nacc8mm_raw.tc',
+                       'l_nacc_desai_mpm_raw.tc','r_nacc_desai_mpm_raw.tc', 'b_nacc_desai_mpm_raw.tc',
+                       'l_ins_raw.tc','r_ins_raw.tc', 'b_ins_raw.tc',
+                       'l_antins_desai_mpm_raw.tc','r_antins_desai_mpm_raw.tc', 'b_antins_desai_mpm_raw.tc',
+                       'l_mpfc_raw.tc','r_mpfc_raw.tc', 'b_mpfc_raw.tc',
+                       'l_dlpfc_raw.tc','r_dlpfc_raw.tc', 'b_dlpfc_raw.tc',
+                       'l_acing_raw.tc','r_acing_raw.tc', 'b_acing_raw.tc',
+                       'l_vlpfc_raw.tc','r_vlpfc_raw.tc', 'b_vlpfc_raw.tc',
+                       'l_caudate_raw.tc','r_caudate_raw.tc', 'b_caudate_raw.tc')]
 
 # format data columns
 mid.tc = mid.tc %>%
@@ -152,7 +154,8 @@ mid.tc.long.sum.bin = mid.tc %>%
                           grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
+                          grepl("r_", variable) ~ 'right',
+  						  grepl("b_", variable) ~ 'both'))
 
 mid.tc.long.sum = mid.tc %>%
   gather(variable, value, l_nacc8mm_raw.tc:r_caudate_raw.tc) %>%
@@ -168,7 +171,8 @@ mid.tc.long.sum = mid.tc %>%
                             grepl("p$", trialtype) ~ 'pos')) %>%
   # add column for hemisphere
   mutate(hemi = case_when(grepl("l_", variable) ~ 'left',
-                          grepl("r_", variable) ~ 'right'))
+                          grepl("r_", variable) ~ 'right',
+  						  grepl("b_", variable) ~ 'both'))
 
 mid.tc.long.sum.bin$vale = as.factor(mid.tc.long.sum.bin$vale)
 mid.tc.long.sum.bin$variable = as.factor(mid.tc.long.sum.bin$variable)
