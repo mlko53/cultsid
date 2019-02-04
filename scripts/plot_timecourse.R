@@ -266,7 +266,7 @@ plotHVM = function(d, area, val){
 ####### Plot Bar ########
 #########################
 
-plotBar = function(task, area, val, outcome, TR){
+plotBar = function(task, area, val, outcome, pre_time, post_time){
     if(task=="sid"){
         df = sid.tc.long
     } else{
@@ -275,7 +275,7 @@ plotBar = function(task, area, val, outcome, TR){
         }
     }
     df = df %>%
-        filter(variable == area & vale == val & TR == TR)
+        filter(variable == area & vale == val & TR >= pre_time & TR < post_time)
     if(outcome!="both"){
     	df = df %>%
     		filter(hit==outcome)
