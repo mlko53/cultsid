@@ -11,6 +11,7 @@ require("forcats")
 require("grid")
 require("stringr")
 library("Hmisc")
+detach(package:plyr)
 
 # exclude list
 exclude = c('dj051418', 'dy051818', 'sh101518', 'wh071918', 'hc101818')
@@ -72,6 +73,7 @@ sid.tc.long.sum.bin = sid.tc.long %>%
   summarise(mean.subject = mean(value),
             se.subject = sd(value)/sqrt(length(value)),
             var.subject = var(value)) %>%
+  group_by(TR, trialtype, vale, variable, hemi, ethni_r) %>%
   summarise(mean = mean(mean.subject),
             se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
             se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject))))
@@ -81,6 +83,7 @@ sid.tc.long.sum = sid.tc.long %>%
   summarise(mean.subject = mean(value),
             se.subject = sd(value)/sqrt(length(value)),
             var.subject = var(value)) %>%
+  group_by(TR, trialtype, vale, variable, hemi, hit, ethni_r) %>%
   summarise(mean = mean(mean.subject),
             se.mean = sd(mean.subject)/sqrt(length(unique(sid.tc$subject))),
             se.inv.mean = sqrt(wtd.var(mean.subject, 1/var.subject))/sqrt(length(unique(sid.tc$subject))))

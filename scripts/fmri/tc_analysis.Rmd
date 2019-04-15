@@ -1,0 +1,51 @@
+---
+title: "tc_analysis"
+author: "Michael Ko"
+date: "February 19, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lme4)
+library(lmerTest)
+source('plot_timecourse.R')
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SID
+
+```{r}
+plotTC("sid", "nacc8mm_raw.tc", "pos", "hit")
+```
+
+```{r cars}
+questionnaire <- read.csv("R/SID_questionnaires.csv")
+questionnaire <- questionnaire %>%
+        filter(id != "") %>%
+        mutate(i.hap = (i.exci1 + i.enth1 + i.elat1 + i.euph1) * .25,
+               i.hapi = (i.exci1i + i.enth1i + i.elat1i + i.euph1i) * .25,
+               i.lap = (i.calm1 + i.sere1 + i.peac1 + i.rela1) * .25,
+               i.lapi = (i.calm1i + i.sere1i + i.peac1i + i.rela1i) * .25,
+               r.hap = (r.exci1 + r.enth1 + r.elat1 + r.euph1) * .25,
+               r.hapi = (r.exci1i + r.enth1i + r.elat1i + r.euph1i) * .25,
+               r.lap = (r.calm1 + r.sere1 + r.peac1 + r.rela1) * .25,
+               r.lapi = (r.calm1i + r.sere1i + r.peac1i + r.rela1i) * .25,
+               subject = id)
+df <- sid.tc.long %>%
+        left_join(questionnaire %>% select(subject, i.hap, i.hapi, i.lap, i.lapi, r.hap, r.hapi, r.lap, r.lapi))
+```
+
+## Outcome
+
+```{r}
+# nacc8mm_raw.tc
+# mpfc_raw.tc
+# caudate_raw.tc
+
+x <- df %>%
+        filter(variable == "nacc8mm_raw.tc" & vale == "pos" & hit == "hit" & TR %in% c(6) & hemi=='both' & trialtype %in% c("hap", "lap"))
+
+summary(aov(value ~ trialtype * ethni_r + Error(subject), data=x))
+
+```
