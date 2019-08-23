@@ -10,6 +10,8 @@ data/bhvr/*
 !data/fmri
 data/fmri/*
 !data/fmri/.gitkeep
+!data/fmri/get_fmri.sh
+!data/fmri/rename.sh
 
 # ignore everything in masks
 masks/*
