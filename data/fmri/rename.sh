@@ -53,10 +53,9 @@ mv s529 yl073119
 mv s424 jd072919
 mv s425 ac082219
 # to run
-mv s426 js082219
-mv s427 jt082619
-mv s428 jk082819
-mv s429 ao082819
+#mv s426 js082219
+#mv s427 jk082819
+#mv s428 ao082819
 
 rm -rf s003
 rm -rf s004
