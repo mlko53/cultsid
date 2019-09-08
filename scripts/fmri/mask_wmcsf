@@ -10,7 +10,7 @@ set masks = ( wm_mask csf_mask )
 # output file after preprocessing
 set regfiles = ( sid_mbnf mid_mbnf )
 
-set subjects = ( dj051418 dy051818 gl052818 he042718 hw111117 is060118 jd051818 mh071418 qh111717 rt022718 sw050818 tl111017 wh071918 xl042618 xz071218 yd081018 yg042518 yl070418 yl070518 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 )
+set subjects = ( $1 ) 
 
 set var = `pwd` 
 

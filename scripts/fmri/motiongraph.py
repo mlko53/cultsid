@@ -12,20 +12,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
 
+import argparse
+
 
 ##############################################################################
 ###                                                                        ###
 ### 3dmotion graphing and analysis:                                        ###
 ###                                                                        ###
 ##############################################################################
-
-
-subjects = ['dj051418', 'dy051818', 'rt022718', 'he042718', 'jd051818', 'gl052818',
-			'hw111117', 'is060118', 'mh071418', 'qh111717', 'sw050818', 'tl111017',
-			'wh071918', 'xl042618', 'xz071218', 'yd081018', 'yg042518', 'yl070418',
-			'yl070518', 'yl080118', 'yp070418', 'yq052218', 'yw070618', 'yw081018', 'yx072518']
-
-subjects = ['test']
 
 ################# 3dmotion graph/log specific variables ######################
 ##
@@ -296,6 +290,11 @@ def subject_dirs(topdir=os.getcwd(), prefixes=[], exclude=[]):
     
     
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--subject", type=str)
+    args = parser.parse_args()
+    subjects = [args.subject]
+
     motionfiles = ['3dmotionsid.1D', '3dmotionmid.1D']
     os.chdir('../data/fmri')
     datadir = os.getcwd()
@@ -309,15 +308,5 @@ if __name__ == '__main__':
         for motionfile in motionfiles:
         	CreateMotionGraph(subname,motionfile)
         os.chdir('..')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+    print("Completed motion graph")

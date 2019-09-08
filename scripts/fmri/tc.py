@@ -3,16 +3,10 @@ import os
 import subprocess
 import shutil
 import numpy as np
-
-all_subjects = ['dj051418', 'dy051818', 'gl052818', 'he042718', 'hw111117', 
-                'is060118', 'jd051818', 'mh071418', 'qh111717', 'rt022718', 
-                'sw050818', 'tl111017', 'wh071918', 'xl042618', 'xz071218', 
-                'yd081018', 'yg042518', 'yl070418', 'yl070518', 'yl080118', 
-                'yp070418', 'yq052218', 'yw070618', 'yw081018', 'yx072518']
-
+import argparse
 
 vector_file = ['sid_runs.1D', 'mid_runs.1D']
-masks = ['nacc8mm','mpfc','acing','caudate','ins','dlpfc','vlpfc','nacc_desai_mpm','antins_desai_mpm']
+masks = ['nacc8mmf','mpfcf','acingf','caudatef','insf','dlpfcf']
 
 dataset_name = ['sid_mbnf+orig', 'mid_mbnf+orig']
 anat_name = 'anat+tlrc'
@@ -169,11 +163,17 @@ def find_subject_dirs(topdir, subject):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--subject", type=str)
+    args = parser.parse_args()
+
+    all_subjects = [args.subject]
+
     for i, epi in enumerate(['sid_tcs', 'mid_tcs']):
-        
         for subject in all_subjects:
 
                 scriptsdir = os.getcwd()
+                scriptsfmridir = os.path.join(scriptsdir, "fmri")
                 topdir = os.path.split(os.getcwd())[0] 
                 maskdir = topdir + '/masks'
                 topdir += '/data/fmri'
@@ -182,11 +182,11 @@ if __name__ == '__main__':
                 print "Looking into:    " + subjectdir
             
                 if vector_file[i]:
-                    make_vectors(subjectdir, scriptsdir, vector_file[i], subject)
+                    make_vectors(subjectdir, scriptsfmridir, vector_file[i], subject)
             
-                os.chdir(scriptsdir)
+                os.chdir(scriptsfmridir)
             
                 maskdump(topdir, subjectdir, subject, dataset_name[i], anat_name, masks,
-                     scriptsdir, tmp_tc_dir[i], maskdir)
+                     scriptsfmridir, tmp_tc_dir[i], maskdir)
             
                 os.chdir(scriptsdir)
