@@ -1,5 +1,6 @@
 # ignore everything in data
 data/*
+scripts/runs/*
 
 # ignore everything in bhvr
 !data/bhvr
