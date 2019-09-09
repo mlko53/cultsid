@@ -19,7 +19,7 @@ set script_dir = `pwd`
 
 #-#-#-#-#-#-#-#-#-#-#-		Subjects					-#-#-#-#-#-#-#-#-#-#-#
 
-set subjects = ( test )
+set subjects = ( $1 )
 
 #-#-#-#-#-#-#-#-#-#-#-		SID 						-#-#-#-#-#-#-#-#-#-#-#
 
@@ -34,7 +34,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	python2 $script_dir"/makeVec.py" $script_dir"/sid_vecs_full.txt" ${subject}
+	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/sid_vecs_full.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -55,7 +55,7 @@ foreach subject ( ${subjects} )
 		rm -rf sid_reg_csfwm+orig*
 	endif
 	
-	cp -f $script_dir"/sid_runs.1D" ./
+	cp -f $script_dir"/fmri/sid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -111,7 +111,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	python2 $script_dir"/makeVec.py" $script_dir"/mid_vecs_full.txt" ${subject}
+	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/mid_vecs_full.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -132,7 +132,7 @@ foreach subject ( ${subjects} )
 		rm -rf mid_reg_csfwm+orig*
 	endif
 	
-	cp -f $script_dir"/mid_runs.1D" ./
+	cp -f $script_dir"/fmri/mid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 

@@ -5,16 +5,17 @@
 #		Auto-written by ScriptWriter
 #----------------------------------------------------------------------#
 
-
+set script_dir = `pwd`  
 
 #------------	
 # adwarp regresions to parent dataset:
 #
 
-foreach subject ( gl052818 he042718 hw111117 is060118 jd051818 qh111717 rt022718 sw050818 tl111017 xl042618 yg042518 yq052218 )
+foreach subject ( rt022718 he042718 jd051818 gl052518 ac081918 kt082818 mp083018 lp102118 ch102218 nb102318 lh102418 jk102518 fd111018 sm110518 mp110618 sw110818 mc111218 dv111518 kl112918 jd072919 tl111017 hw111117 qh111717 yg042518 xl042618 sw050818 yq052218 is060118 yp070418 yl070418 yl070518 yw070618 xz071218 mh071418 yx072518 yl080118 yw081018 yd081018 js101518 al052019 jl053119 wx060119 yd072319 az072519 yy072919 pw073019 yl073119 )
 
-	cd ../${subject}*
+	cd ../data/fmri/${subject}*
 	adwarp -overwrite -apar anat+tlrc. -dpar zmid_reg_csfwm+orig. -dxyz 2.9 -prefix zmid_reg_csfwm
+    cd $script_dir
 
 end
 
@@ -23,15 +24,16 @@ end
 # prepare files and variables for the ttest:
 #
 
-cd /Users/blevins/Desktop/cultsid/scripts
 @ count = 1
-mkdir -p /Users/blevins/Desktop/cultsid/ttest/mid_n12
+mkdir ../ttest/
+mkdir ../ttest/mid
 
 
 #------------	
-# set the stats variable to iterate alongside outfiles:
+# set the stats variable to iterate alongmide outfiles:
 #
 
+# first six regressors (motion) have 3 each; start at 19
 set stats = ( 19 22 25 28 31 34 )
 
 
@@ -48,20 +50,55 @@ foreach outfile ( csf wm ant out gvnant lvnant )
 
 	3dttest++ -overwrite -prefix ./${outfile}z -toz -AminusB \
 		-setA \
-                "../gl052818/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../he042718/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../jd051818/zmid_reg_csfwm+tlrc[${stat}]" \
-		"../rt022718/zmid_reg_csfwm+tlrc[${stat}]" \
-                -setB \
-		"../hw111117/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../is060118/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../qh111717/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../sw050818/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../tl111017/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../xl042618/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../yg042518/zmid_reg_csfwm+tlrc[${stat}]" \
-                "../yq052218/zmid_reg_csfwm+tlrc[${stat}]" \
-	
-	mv ${outfile}z* /Users/blevins/Desktop/cultsid/ttest/mid_n12
+            "../data/fmri/rt022718/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/he042718/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/jd051818/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/gl052518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/ac081918/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/kt082818/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/mp083018/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/lp102118/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/ch102218/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/nb102318/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/lh102418/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/jk102518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/fd111018/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/sm110518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/mp110618/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/sw110818/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/mc111218/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/dv111518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/kl112918/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/jd072919/zmid_reg_csfwm+tlrc[${stat}]" \
+        -setB \
+            "../data/fmri/tl111017/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/hw111117/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/qh111717/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yg042518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/xl042618/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/sw050818/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yq052218/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/is060118/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yp070418/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yl070418/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yl070518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yw070618/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/xz071218/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/mh071418/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yx072518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yl080118/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yw081018/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yd081018/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/js101518/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/al052019/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/jl053119/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/wx060119/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yd072319/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/az072519/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yy072919/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/pw073019/zmid_reg_csfwm+tlrc[${stat}]" \
+            "../data/fmri/yl073119/zmid_reg_csfwm+tlrc[${stat}]" 
+
+	mv ${outfile}z* ../ttest/mid
 
 end
