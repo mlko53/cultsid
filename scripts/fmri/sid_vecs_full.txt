@@ -3,7 +3,7 @@
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
 OUTPUT: "ant_sid.1D"
-MARK TR = 1,2 WITH 1
+MARK TR = 2 WITH 1
 END_VEC
 
 BEGIN_VEC
@@ -15,87 +15,72 @@ END_VEC
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
 OUTPUT: "gvnant_sid.1D"
-MARK TR = 1,2 AND
-		trialtype = 4 WITH -1
-MARK TR = 1,2 AND
-		trialtype = 5 WITH 0
-MARK TR = 1,2 AND
+MARK TR = 2 AND
+		trialtype = 8 WITH -3
+MARK TR = 2 AND
+		trialtype = 4 WITH 1
+MARK TR = 2 AND
+		trialtype = 5 WITH 1
+MARK TR = 2 AND
 		trialtype = 6 WITH 1
 END_VEC
 
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
 OUTPUT: "lvnant_sid.1D"
-MARK TR = 1,2 AND
-                trialtype = 1 WITH -1
-MARK TR = 1,2 AND
-                trialtype = 2 WITH 0
-MARK TR = 1,2 AND
-                trialtype = 3 WITH 1
+MARK TR = 2 AND
+		trialtype = 7 WITH -3
+MARK TR = 2 AND
+		trialtype = 1 WITH 1
+MARK TR = 2 AND
+		trialtype = 2 WITH 1
+MARK TR = 2 AND
+		trialtype = 3 WITH 1
 END_VEC
 
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "hgvnout_sid.1D"
+OUTPUT: "gvnout_sid.1D"
 MARK TR = 4 AND
-                trialtype = 6 AND
-		hit = 1 WITH 1
+		trialtype = 4 AND
+        hit = 1 WITH 1
+MARK TR = 4 AND
+		trialtype = 5 AND
+        hit = 1 WITH 3
 MARK TR = 4 AND
 		trialtype = 6 AND
-		hit = 0 WITH -1
+        hit = 1 WITH 5
+MARK TR = 4 AND
+		trialtype = 4 AND
+        hit = 0 WITH -1
+MARK TR = 4 AND
+		trialtype = 5 AND
+        hit = 0 WITH -3
+MARK TR = 4 AND
+		trialtype = 6 AND
+        hit = 0 WITH -5
 END_VEC
+
 
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "mgvnout_sid.1D"
+OUTPUT: "lvnout_sid.1D"
 MARK TR = 4 AND
-                trialtype = 5 AND 
-                hit = 1 WITH 1
+		trialtype = 1 AND
+        hit = 1 WITH 1
 MARK TR = 4 AND
-                trialtype = 5 AND
-                hit = 0 WITH -1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "lgvnout_sid.1D"
+		trialtype = 2 AND
+        hit = 1 WITH 3
 MARK TR = 4 AND
-                trialtype = 4 AND 
-                hit = 1 WITH 1
+		trialtype = 3 AND
+        hit = 1 WITH 5
 MARK TR = 4 AND
-                trialtype = 4 AND
-                hit = 0 WITH -1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "nvhlout_sid.1D"
+		trialtype = 1 AND
+        hit = 0 WITH -1
 MARK TR = 4 AND
-                trialtype = 3 AND 
-                hit = 1 WITH 1
+		trialtype = 2 AND
+        hit = 0 WITH -3
 MARK TR = 4 AND
-                trialtype = 3 AND
-                hit = 0 WITH -1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "nvmlout_sid.1D"
-MARK TR = 4 AND
-                trialtype = 2 AND
-                hit = 1 WITH 1
-MARK TR = 4 AND
-                trialtype = 2 AND
-                hit = 0 WITH -1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "nvllout_sid.1D"
-MARK TR = 4 AND
-                trialtype = 1 AND
-                hit = 1 WITH 1
-MARK TR = 4 AND
-                trialtype = 1 AND
-                hit = 0 WITH -1
+		trialtype = 3 AND
+        hit = 0 WITH -5
 END_VEC
