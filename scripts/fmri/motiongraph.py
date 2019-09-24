@@ -252,7 +252,10 @@ def CreateMotionGraph(subject,motionout):
 
     # save the figure, then clear it to be safe (because I don't know how
     # matplotlib handles batch graphing)
-    plt.savefig('3dmotion_sid_fig.png',format='png',dpi=300)
+    if "sid" in motionout:
+    	plt.savefig('3dmotion_sid_fig.png',format='png',dpi=300)
+    else:
+        plt.savefig('3dmotion_mid_fig.png',format='png',dpi=300)
     fig.clear()
     LogSubject(subject,subjectLogStrs)
     return output

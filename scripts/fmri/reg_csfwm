@@ -42,12 +42,8 @@ foreach subject ( ${subjects} )
 	waver -dt 2.0 -GAM -numout 384 -input out_sid.1D > out_sidc.1D
 	waver -dt 2.0 -GAM -numout 384 -input gvnant_sid.1D > gvnant_sidc.1D
 	waver -dt 2.0 -GAM -numout 384 -input lvnant_sid.1D > lvnant_sidc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hgvnout_sid.1D > hgvnout_sidc.1D
-    waver -dt 2.0 -GAM -numout 384 -input mgvnout_sid.1D > mgvnout_sidc.1D
-    waver -dt 2.0 -GAM -numout 384 -input lgvnout_sid.1D > lgvnout_sidc.1D
-	waver -dt 2.0 -GAM -numout 384 -input nvhlout_sid.1D > nvhlout_sidc.1D
-    waver -dt 2.0 -GAM -numout 384 -input nvmlout_sid.1D > nvmlout_sidc.1D
-    waver -dt 2.0 -GAM -numout 384 -input nvllout_sid.1D > nvllout_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input gvnout_sid.1D > gvnout_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input lvnout_sid.1D > lvnout_sidc.1D
 
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -59,7 +55,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
-	3dDeconvolve -float -jobs 8 -input sid_mbnf+orig -jobs 6 -concat sid_runs.1D -nfirst 0 -num_stimts 12 -polort 1 \
+	3dDeconvolve -float -jobs 8 -input sid_mbnf+orig -jobs 6 -concat sid_runs.1D -nfirst 0 -num_stimts 14 -polort 1 \
 		-stim_file 1 '3dmotionsid.1D[1]' -stim_label 1 'roll' \
 		-stim_file 2 '3dmotionsid.1D[2]' -stim_label 2 'pitch' \
 		-stim_file 3 '3dmotionsid.1D[3]' -stim_label 3 'yaw' \
@@ -72,12 +68,8 @@ foreach subject ( ${subjects} )
 		-stim_file 10 'out_sidc.1D' -stim_label 10 'out' \
 		-stim_file 11 'gvnant_sidc.1D' -stim_label 11 'gvnant' \
 		-stim_file 12 'lvnant_sidc.1D' -stim_label 12 'lvnant' \
-		#-stim_file 13 'hgvnout_sidc.1D' -stim_label 13 'hgvnout' \
-		#-stim_file 14 'mgvnout_sidc.1D' -stim_label 14 'mgvnout' \
-        #-stim_file 15 'lgvnout_sidc.1D' -stim_label 15 'lgvnout' \
-		#-stim_file 16 'nvhlout_sidc.1D' -stim_label 16 'nvhlout' \
-        #-stim_file 17 'nvmlout_sidc.1D' -stim_label 17 'nvmlout' \
-        #-stim_file 18 'nvllout_sidc.1D' -stim_label 18 'nvllout' \
+		-stim_file 13 'gvnout_sidc.1D' -stim_label 13 'gvnout' \
+		-stim_file 14 'lvnout_sidc.1D' -stim_label 14 'lvnout' \
 		-tout -fout -bucket sid_reg_csfwm
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
@@ -119,12 +111,8 @@ foreach subject ( ${subjects} )
 	waver -dt 2.0 -GAM -numout 384 -input out_mid.1D > out_midc.1D
 	waver -dt 2.0 -GAM -numout 384 -input gvnant_mid.1D > gvnant_midc.1D
 	waver -dt 2.0 -GAM -numout 384 -input lvnant_mid.1D > lvnant_midc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hgvnout_mid.1D > hgvnout_midc.1D
-    waver -dt 2.0 -GAM -numout 384 -input mgvnout_mid.1D > mgvnout_midc.1D
-    waver -dt 2.0 -GAM -numout 384 -input lgvnout_mid.1D > lgvnout_midc.1D
-	waver -dt 2.0 -GAM -numout 384 -input nvhlout_mid.1D > nvhlout_midc.1D
-    waver -dt 2.0 -GAM -numout 384 -input nvmlout_mid.1D > nvmlout_midc.1D
-    waver -dt 2.0 -GAM -numout 384 -input nvllout_mid.1D > nvllout_midc.1D
+    waver -dt 2.0 -GAM -numout 384 -input gvnout_mid.1D > gvnout_midc.1D
+    waver -dt 2.0 -GAM -numout 384 -input lvnout_mid.1D > lvnout_midc.1D
 
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -136,7 +124,7 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
-	3dDeconvolve -float -jobs 8 -input mid_mbnf+orig -jobs 6 -concat mid_runs.1D -nfirst 0 -num_stimts 12 -polort 1 \
+	3dDeconvolve -float -jobs 8 -input mid_mbnf+orig -jobs 6 -concat mid_runs.1D -nfirst 0 -num_stimts 14 -polort 1 \
 		-stim_file 1 '3dmotionmid.1D[1]' -stim_label 1 'roll' \
 		-stim_file 2 '3dmotionmid.1D[2]' -stim_label 2 'pitch' \
 		-stim_file 3 '3dmotionmid.1D[3]' -stim_label 3 'yaw' \
@@ -149,12 +137,8 @@ foreach subject ( ${subjects} )
 		-stim_file 10 'out_midc.1D' -stim_label 10 'out' \
 		-stim_file 11 'gvnant_midc.1D' -stim_label 11 'gvnant' \
 		-stim_file 12 'lvnant_midc.1D' -stim_label 12 'lvnant' \
-		#-stim_file 13 'hgvnout_midc.1D' -stim_label 13 'hgvnout' \
-		#-stim_file 14 'mgvnout_midc.1D' -stim_label 14 'mgvnout' \
-        #-stim_file 15 'lgvnout_midc.1D' -stim_label 15 'lgvnout' \
-		#-stim_file 16 'nvhlout_midc.1D' -stim_label 16 'nvhlout' \
-        #-stim_file 17 'nvmlout_midc.1D' -stim_label 17 'nvmlout' \
-        #-stim_file 18 'nvllout_midc.1D' -stim_label 18 'nvllout' \
+		-stim_file 13 'gvnout_midc.1D' -stim_label 13 'gvnout' \
+		-stim_file 14 'lvnout_midc.1D' -stim_label 14 'lvnout' \
 		-tout -fout -bucket mid_reg_csfwm
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#

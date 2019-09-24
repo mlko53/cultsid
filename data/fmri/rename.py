@@ -2,6 +2,8 @@ import os
 import glob
 import shutil
 
+# lp102118, yg042518 has an extra EPI scan
+
 
 def return_sessions(path):
     sessions = glob.glob(path+"/*")
@@ -50,11 +52,11 @@ def rename_scans(path):
 
     # rename SID
     dest = path+"/EPI0"
-    os.rename(epi_folders[0], dest)
+    os.rename(epi_folders[-2], dest)
 
     # rename MID
     dest = path+"/EPI1"
-    os.rename(epi_folders[1], dest)
+    os.rename(epi_folders[-1], dest)
     
     return
 

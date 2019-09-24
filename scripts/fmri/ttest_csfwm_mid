@@ -34,7 +34,7 @@ mkdir ../ttest/mid
 #
 
 # first six regressors (motion) have 3 each; start at 19
-set stats = ( 19 22 25 28 31 34 )
+set stats = ( 19 22 25 28 31 34 37 40 )
 
 
 #------------	
@@ -43,7 +43,7 @@ set stats = ( 19 22 25 28 31 34 )
 
 
 #foreach outfile ( csf wm ant out gvnant lvnant hgvnout mgvnout lgvnout nvhlout nvmlout nvllout )
-foreach outfile ( csf wm ant out gvnant lvnant )
+foreach outfile ( csf wm ant out gvnant lvnant gvnout lvnout )
 	set stat = $stats[${count}]
 	@ count = $count + 1
 	
@@ -61,7 +61,7 @@ foreach outfile ( csf wm ant out gvnant lvnant )
             "../data/fmri/ch102218/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/nb102318/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/lh102418/zmid_reg_csfwm+tlrc[${stat}]" \
-            "../data/fmri/jk102518/zmid_reg_csfwm+tlrc[${stat}]" \
+            #"../data/fmri/jk102518/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/fd111018/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/sm110518/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/mp110618/zmid_reg_csfwm+tlrc[${stat}]" \
@@ -71,8 +71,8 @@ foreach outfile ( csf wm ant out gvnant lvnant )
             "../data/fmri/kl112918/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/jd072919/zmid_reg_csfwm+tlrc[${stat}]" \
         -setB \
-            "../data/fmri/tl111017/zmid_reg_csfwm+tlrc[${stat}]" \
-            "../data/fmri/hw111117/zmid_reg_csfwm+tlrc[${stat}]" \
+            #"../data/fmri/tl111017/zmid_reg_csfwm+tlrc[${stat}]" \
+            #"../data/fmri/hw111117/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/qh111717/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/yg042518/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/xl042618/zmid_reg_csfwm+tlrc[${stat}]" \
@@ -97,7 +97,7 @@ foreach outfile ( csf wm ant out gvnant lvnant )
             "../data/fmri/az072519/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/yy072919/zmid_reg_csfwm+tlrc[${stat}]" \
             "../data/fmri/pw073019/zmid_reg_csfwm+tlrc[${stat}]" \
-            "../data/fmri/yl073119/zmid_reg_csfwm+tlrc[${stat}]" 
+            #"../data/fmri/yl073119/zmid_reg_csfwm+tlrc[${stat}]" 
 
 	mv ${outfile}z* ../ttest/mid
 
