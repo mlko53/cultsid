@@ -1,0 +1,45 @@
+### All ###
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "gvn_ant_mid.1D"
+MARK TR = 2 AND
+		trialtype = 4 WITH 1
+MARK TR = 2 AND
+		trialtype = 5 WITH 1
+MARK TR = 2 AND
+		trialtype = 6 WITH 1
+MARK TR = 2 AND 
+     trialtype = 8 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "hgvlg_ant_mid.1D"
+MARK TR = 2 AND
+		trialtype = 4 WITH -1
+MARK TR = 2 AND
+		trialtype = 6 WITH 1
+END_VEC
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "lvn_ant_mid.1D"
+MARK TR = 2 AND
+		trialtype = 1 WITH 1
+MARK TR = 2 AND
+		trialtype = 2 WITH 1
+MARK TR = 2 AND
+		trialtype = 3 WITH 1
+MARK TR = 2 AND
+		trialtype = 7 WITH -1
+END_VEC
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "hlvll_ant_mid.1D"
+MARK TR = 2 AND
+		trialtype = 1 WITH -1
+MARK TR = 2 AND
+		trialtype = 3 WITH 1
+END_VEC
