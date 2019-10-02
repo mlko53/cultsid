@@ -10,7 +10,7 @@ mv s014 dj051418
 mv s015 jd051818
 mv s016 dy051818
 mv s018 yq052218
-mv s019 gl052518
+v s019 gl052518
 mv s020 is060118
 mv s021 yp070418
 mv s022 yl070418
@@ -52,15 +52,15 @@ mv s528 pw073019
 mv s529 yl073119
 mv s424 jd072919
 mv s425 ac082219
-# to run
 mv s426 js082219
 mv s427 jk082819
 mv s428 ao082819
 
+# incomplete data files
 rm -rf s003
 rm -rf s004
 rm -rf s005
 rm -rf s017
 rm -rf s030
 rm -rf s523/20542
-# what is s030?
+# s030: probably a test run on 8/1/18
