@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --time 00:20:00
+#SBATCH --time 02:00:00
 
 #SBATCH --job-name="template"
 #SBATCH --output=runs/template.out
@@ -17,16 +17,16 @@ ml afni
 ml py-scipystack
 
 # preprocessing
-#csh fmri/preprocess_nocsfwm template
+csh fmri/preprocess_nocsfwm template
 
 # mask and tc dump
-#csh fmri/mask_wmcsf template
-#python fmri/tc.py --subject template
+csh fmri/mask_wmcsf template
+python fmri/tc.py --subject template
 
 # motion
-#python fmri/motiongraph.py --subject template
+python fmri/motiongraph.py --subject template
 
 # regression
-csh fmri/reg_csfwm template
+csh fmri/reg template
 
 echo "Done"
