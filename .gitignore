@@ -25,3 +25,6 @@ sid_tcs/*
 # ignore R history and data files
 *.Rhistory
 *.RData
+
+# ignore html outputs
+*.html

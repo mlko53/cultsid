@@ -1,0 +1,418 @@
+---
+title: "Social Media (SID)"
+author: "Michael Ko"
+date: "8/19/2018"
+output:
+  html_document:
+    highlight: pygments
+    theme: flatly
+    toc: yes
+    toc_float:
+      collapsed: no
+  pdf_document:
+    toc: yes
+---
+
+```{r include=F}
+library(tidyverse)
+library(gtools)
+library(matrixStats)
+library(psych)
+library(lme4)
+library(lmerTest)
+
+rename_social <- function(df){
+    # extract question descriptor
+    df <- df[-1, ]
+    
+    # rename meta vars
+    colnames(df)[1] <- "ResponseID"
+    df <- df %>% dplyr::rename(IPAddress = V6,
+                               StartDate = V8,
+                               EndDate = V9,
+                               Finished = V10)
+    
+    # rename consent
+    df <- df %>% dplyr::rename(consent = Q36,
+                               photoConsent1 = Q38,
+                               photoConsent2 = Q40)
+    
+    # rename social media items
+    df <- df %>% dplyr::rename(hasSocialMedia = Q5,
+                               hasSocialMedia_TEXT = Q34)
+    
+    cnames <- c()
+    for (type in c("close", "new")){
+        cnames <- c(cnames, paste(type, c("nom_1", "nom_2", "nom_3"), sep="_"))
+        for (n in c("1", "2", "3")){
+            questions <- c("instr1", "instr2", "seeFace", "howManyOthers", "descTEXT",
+                           "eyes", "eyesTEXT", "mouth", "mouthTEXT", "valence", "arousal",
+                           "emotion", "emotionTEXT", "IOS", "ethn", "ethnTEXT")
+            questions <- paste(type, questions, sep="_")
+            questions <- paste(questions, n, sep="_")
+            cnames <- c(cnames, questions)
+        }
+    }
+    
+    colnames(df)[18:(18+length(cnames)-1)] <- cnames
+    
+    return(df)
+}
+
+rename_questionnaire <- function(df){
+    # extract question descriptor
+    df <- df[-1, ]
+    
+    # rename meta vars
+    colnames(df)[1] <- "ResponseID"
+    df <- df %>% dplyr::rename(IPAddress = V6,
+                               StartDate = V8,
+                               EndDate = V9,
+                               Finished = V10)
+    
+    # rename all other items
+    df <- df %>% dplyr::rename(ethn = Q107,
+                               ethn_TEXT = Q107_TEXT,
+                               email = Q98)
+    
+    df <- df %>% select(ResponseID, IPAddress, StartDate, EndDate, 
+                        ethn, ethn_TEXT,
+                        contains("r."), contains("i."),
+                        email, Finished)
+    
+    return(df)
+}
+
+compute_affect <- function(df){
+    hap <- c("enth1", "exci1", "elat1", "euph1")
+    lap <- c("peac1", "sere1", "rela1", "calm1")
+    
+    ideal_items <- colnames(df)[str_which(colnames(df), "^i[.]")]
+    actual_items <- colnames(df)[str_which(colnames(df), "^r[.]")]
+    
+    df$r.mean <- rowMeans(as.matrix(df[actual_items]), na.rm=TRUE)
+    df$r.sd <- rowSds(as.matrix(df[actual_items]), na.rm=TRUE)
+    df$i.mean <- rowMeans(as.matrix(df[ideal_items]), na.rm=TRUE)
+    df$i.sd <- rowSds(as.matrix(df[ideal_items]), na.rm=TRUE)
+    
+    df[paste0(ideal_items, "_i")] <- (as.matrix(df[ideal_items]) - df$i.mean) / df$i.sd
+    df[paste0(actual_items, "_i")] <- (as.matrix(df[actual_items]) - df$r.mean) / df$r.sd
+
+    df$i.hap <- rowMeans(as.matrix(df[paste0("i.", hap)]), na.rm=TRUE)
+    df$r.hap <- rowMeans(as.matrix(df[paste0("r.", hap)]), na.rm=TRUE)
+    df$i.lap <- rowMeans(as.matrix(df[paste0("i.", lap)]), na.rm=TRUE)
+    df$r.lap <- rowMeans(as.matrix(df[paste0("r.", lap)]), na.rm=TRUE)
+    df$i.hap_i <- rowMeans(as.matrix(df[paste0(paste0("i.", hap), "_i")]), na.rm=TRUE)
+    df$r.hap_i <- rowMeans(as.matrix(df[paste0(paste0("r.", hap), "_i")]), na.rm=TRUE)
+    df$i.lap_i <- rowMeans(as.matrix(df[paste0(paste0("i.", lap), "_i")]), na.rm=TRUE)
+    df$r.lap_i <- rowMeans(as.matrix(df[paste0(paste0("r.", lap), "_i")]), na.rm=TRUE)
+    
+    return(df)
+}
+
+wide_response <- function(df){
+    response <- data.frame(dummy.code(df$response))
+    choices <- colnames(response)
+    wide <- cbind(df, response)
+    wide <- wide %>% gather(key='choice', value='response', choices)
+    return(wide)
+}
+
+se <- function(x){return(sd(x, na.rm=TRUE)/sqrt(length(x)))}
+```
+
+
+## Data Cleaning
+
+```{r include=F}
+# social media questionnaire 
+socialMediaUS <- read.csv("../../data/bhvr/surveys/SID_SocialMedia.csv")
+socialMediaCH <- read.csv("../../data/bhvr/surveys/SID_SocialMedia__Chinese_Final.csv")
+socialMediaHK <- read.csv("../../data/bhvr/surveys/SID_SocialMedia__Hong_Kong_Final.csv")
+
+# rename social media
+socialMediaUS <- rename_social(socialMediaUS)
+socialMediaCH <- rename_social(socialMediaCH)
+socialMediaHK <- rename_social(socialMediaHK)
+
+# join social media
+socialMediaUS$culture <- "US"
+socialMediaCH$culture <- "CH"
+socialMediaHK$culture <- "HK"
+socialMedia <- rbind(socialMediaUS, socialMediaCH, socialMediaHK)
+rm(socialMediaUS, socialMediaCH, socialMediaHK)
+
+# select columns
+socialMedia <- socialMedia %>% 
+                    select(culture, subID,
+                           consent, photoConsent1, photoConsent2,
+                           hasSocialMedia, hasSocialMedia_TEXT,
+                           contains("close"), contains("new"),
+                           ResponseID, IPAddress, StartDate, EndDate, Finished,) %>%
+                    filter(Finished == 1)
+                            
+# filter responses
+socialMedia$subID[20] <- "112"
+socialMedia$subID <- as.character(socialMedia$subID)
+socialMedia$subID <- trimws(socialMedia$subID)
+socialMedia <- socialMedia %>% 
+                    filter(nchar(subID) == 3) %>%
+                    filter(!grepl("\\D", subID))
+
+socialMedia$subID <- as.numeric(socialMedia$subID)
+
+socialMedia <- socialMedia %>% filter(subID >= 100 & subID < 600)
+socialMedia$study <- ifelse(socialMedia$subID >= 400, "fMRI", "lab")
+```
+
+```{r include=F}
+# pretask questionnair
+questionnaireUS <- read.csv("../../data/bhvr/surveys/SID_questionnaires.csv", stringsAsFactors=FALSE,) %>% dplyr::rename(r.stre1=r.stres1)
+questionnaireCH <- read.csv("../../data/bhvr/surveys/SID_questionnaires_Chinese_Final.csv", stringsAsFactors=FALSE,) %>% select(-contains("GEQ")) %>% dplyr::rename(r.sere1=Q11_13, i.slee1=Q23_33, r.stre1=r.stres1)
+questionnaireCHScan <- read.csv("../../data/bhvr/surveys/SID_SCAN_questionnaires_Chinese_Final.csv", stringsAsFactors=FALSE,) %>% select(-contains("GEQ")) %>% dplyr::rename(r.sere1=Q11_13, r.stre1=r.stres1)
+questionnaireHK <- read.csv("../../data/bhvr/surveys/SID_questionnaires_Hong_Kong_Final.csv", stringsAsFactors=FALSE,)
+
+questionnaireUS <- rename_questionnaire(questionnaireUS)
+questionnaireCH <- rename_questionnaire(questionnaireCH)
+questionnaireCHScan <- rename_questionnaire(questionnaireCHScan)
+questionnaireHK <- rename_questionnaire(questionnaireHK)
+
+questionnaire <- smartbind(questionnaireUS, questionnaireCH, questionnaireCHScan, questionnaireHK)
+rm(questionnaireUS, questionnaireCH, questionnaireCHScan, questionnaireHK)
+
+questionnaire <- questionnaire %>% filter(i.angr1 != "" & ethn != "")
+
+# filter tests
+questionnaire <- questionnaire[-c(135:136), ]
+
+# map email to subID
+email_to_subID <- read.csv("../../data/bhvr/surveys/email_to_id.csv")
+questionnaire <- questionnaire %>% left_join(email_to_subID)
+
+# compute ideal affect
+ideal_items <- colnames(questionnaire)[str_which(colnames(questionnaire), "^i[.]")]
+actual_items <- colnames(questionnaire)[str_which(colnames(questionnaire), "^r[.]")]
+items <- c(actual_items, ideal_items)
+questionnaire[, items] <- lapply(items, function(x) as.numeric(questionnaire[[x]]))
+questionnaire <- compute_affect(questionnaire)
+
+questionnaire <- questionnaire %>% arrange(subID)
+
+write.csv(questionnaire, "questionnaire.csv", row.names=F)
+```
+
+```{r include=F}
+# join questionnaire and social media
+socialMedia <- socialMedia %>% left_join(questionnaire %>% select(subID, contains("hap"), contains("lap"), -contains("happ")))
+
+# convert into long form
+wide_df <- socialMedia %>% 
+                    select(subID, study, culture, contains("close"), contains("new"),
+                           contains("hap"), contains("lap"), -contains("happ")) %>%
+                    gather(key=item, value=response, contains("close"), contains("new")) %>%
+                    separate(item, c("type", "item", "friend"), sep="_") %>%
+                    mutate(response = as.character(as.numeric(response))) %>%
+                    arrange(item)
+
+mouth <- wide_df %>% filter(item == "mouth")
+
+eyes <- wide_df %>% filter(item == "eyes")
+
+emotion <- wide_df %>% filter(item == "emotion")
+```
+
+## Plotting
+
+### Raw Ideal Affect
+
+```{r echo=F}
+summary <- socialMedia %>% 
+                select(study, culture, i.hap, i.lap) %>%
+                gather(key=octant, value=response, i.hap, i.lap) %>%
+                group_by(study, culture, octant) %>%
+                summarise(mean = mean(response, na.rm=T),
+                          se = se(response))
+
+ggplot(summary, aes(octant, mean, fill=culture)) + 
+    geom_bar(stat='identity', position='dodge') +
+    geom_errorbar(aes(ymin=mean-se, max=mean+se), position=position_dodge(0.9), width=0.1) +
+    facet_grid(study~.)
+```
+
+### Ipsatized Ideal Affect
+
+```{r echo=F}
+summary <- socialMedia %>% 
+                select(study, culture, i.hap_i, i.lap_i) %>%
+                gather(key=octant, value=response, i.hap_i, i.lap_i) %>%
+                group_by(study, culture, octant) %>%
+                summarise(mean = mean(response, na.rm=T),
+                          se = se(response))
+
+ggplot(summary, aes(octant, mean, fill=culture)) + 
+    geom_bar(stat='identity', position='dodge') +
+    geom_errorbar(aes(ymin=mean-se, max=mean+se), position=position_dodge(0.9), width=0.1) +
+    facet_grid(study~.)
+```
+
+### Friends Grouped Mouth Expression
+
+```{r echo=F}
+mouth <- wide_df %>% filter(item == "mouth")
+
+# group mouth coding
+mouth$response <- recode(mouth$response, '4'="neutral", '5'="calm", '6'="moderate", '7'="excited")
+
+wide_mouth <- wide_response(mouth) %>%  filter(choice %in% c("neutral", "calm", "moderate", "excited"))
+summary_mouth <- wide_mouth %>%
+                    group_by(study, culture, type, choice, subID) %>%
+                    summarise(response = mean(response, na.rm=T)) %>%
+                    group_by(study, culture, type, choice) %>%
+                    summarise(mean = mean(response, na.rm=T),
+                              se = se(response))
+
+summary_mouth$choice <- factor(summary_mouth$choice, levels=c("neutral", "calm", "moderate", "excited"))
+ggplot(summary_mouth, aes(culture, mean, fill=choice)) + 
+    geom_bar(stat='identity', position="dodge") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), position=position_dodge(0.9), width=0.1) + 
+    facet_grid(study~type)
+```
+
+### Friends Grouped Mouth Expression 2
+
+```{r echo=F}
+mouth <- wide_df %>% filter(item == "mouth")
+
+# group mouth coding
+mouth$response <- recode(mouth$response, '4'="neutral", '5'="calm", '6'="excited", '7'="excited")
+
+wide_mouth <- wide_response(mouth) %>%  filter(choice %in% c("neutral", "calm", "excited"))
+summary_mouth <- wide_mouth %>%
+                    group_by(study, culture, type, choice, subID) %>%
+                    summarise(response = mean(response, na.rm=T)) %>%
+                    group_by(study, culture, type, choice) %>%
+                    summarise(mean = mean(response, na.rm=T),
+                              se = se(response))
+
+summary_mouth$choice <- factor(summary_mouth$choice, levels=c("neutral", "calm", "excited"))
+ggplot(summary_mouth, aes(culture, mean, fill=choice)) + 
+    geom_bar(stat='identity', position="dodge") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), position=position_dodge(0.9), width=0.1) + 
+    facet_grid(study~type)
+```
+
+### Friends Emotion
+
+```{r echo=F}
+emotion <- wide_df %>% filter(item == "emotion")
+
+# group mouth coding
+emotion$response <- recode(emotion$response, '1'="excited", '2'="calm", '3'="angry", '4'="fearful", '5'="surprised", '6'='disgusted', '7'="sad", '8'="no emotion", '9'="others")
+
+wide_emotion <- wide_response(emotion) %>%  filter(choice %in% c("excited", "calm", "angry", "fearful", "surprised", "disgusted", "sad", "no emotion", "others"))
+summary_emotion <- wide_emotion %>%
+                    group_by(study, culture, type, choice, subID) %>%
+                    summarise(response = mean(response, na.rm=T)) %>%
+                    group_by(study, culture, type, choice) %>%
+                    summarise(mean = mean(response, na.rm=T),
+                              se = se(response))
+
+summary_emotion$choice <- factor(summary_emotion$choice, levels=c("excited", "calm", "angry", "fearful", "surprised", "disgusted", "sad", "no emotion", "others"))
+ggplot(summary_emotion, aes(culture, mean, fill=choice)) + 
+    geom_bar(stat='identity', position="dodge") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), position=position_dodge(0.9), width=0.1) + 
+    facet_grid(study~type)
+```
+
+### Friends Valence
+
+```{r echo=F}
+valence <- wide_df %>% filter(item == "valence")
+valence$response <- as.numeric(valence$response)
+
+summary_valence <- valence %>%
+                        group_by(study, culture, type, subID) %>%
+                        summarise(response = mean(response, na.rm=T)) %>%
+                        group_by(study, culture, type) %>%
+                        summarise(mean = mean(response, na.rm=T),
+                                  se = se(response))
+
+ggplot(summary_valence, aes(culture, mean, fill=culture)) + 
+    geom_bar(stat='identity', position="dodge") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), position=position_dodge(0.9), width=0.1) + 
+    facet_grid(study~type)
+```
+### Friends Arousal
+
+```{r echo=F}
+arousal <- wide_df %>% filter(item == "arousal")
+arousal$response <- as.numeric(arousal$response)
+
+summary_arousal <- arousal %>%
+                        group_by(study, culture, type, subID) %>%
+                        summarise(response = mean(response, na.rm=T)) %>%
+                        group_by(study, culture, type) %>%
+                        summarise(mean = mean(response, na.rm=T),
+                                  se = se(response))
+
+ggplot(summary_arousal, aes(culture, mean, fill=culture)) + 
+    geom_bar(stat='identity', position="dodge") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), position=position_dodge(0.9), width=0.1) + 
+    facet_grid(study~type)
+```
+
+## Lab Study Stats
+
+```{r echo=F}
+df <- wide_mouth %>% filter(choice=="excited" & study=="lab")
+df$type <- factor(df$type)
+df$culture <- factor(df$culture)
+summary(glmer(data=df, family='binomial', response ~ culture * type + (1|subID)))
+```
+
+## fMRI Study Stats
+
+```{r echo=F}
+df <- wide_mouth %>% filter(choice=="calm" & study=="fMRI")
+df$type <- factor(df$type)
+df$culture <- factor(df$culture)
+
+summary(glmer(data=df, family='binomial', response ~ i.lap_i * type + (1|subID)))
+
+df$type <- factor(df$type, levels=c("new", "close"))
+summary(glmer(data=df, family='binomial', response ~ i.lap_i * type + (1|subID)))
+```
+
+## Extra
+
+### Raw Actual Affect
+
+```{r echo=F}
+summary <- socialMedia %>% 
+                select(study, culture, r.hap, r.lap) %>%
+                gather(key=octant, value=response, r.hap, r.lap) %>%
+                group_by(study, culture, octant) %>%
+                summarise(mean = mean(response, na.rm=T),
+                          se = se(response))
+
+ggplot(summary, aes(octant, mean, fill=culture)) + 
+    geom_bar(stat='identity', position='dodge') +
+    geom_errorbar(aes(ymin=mean-se, max=mean+se), position=position_dodge(0.9), width=0.1) +
+    facet_grid(study~.)
+```
+
+### Ipsatized Actual Affect
+
+```{r echo=F}
+summary <- socialMedia %>% 
+                select(study, culture, r.hap_i, r.lap_i) %>%
+                gather(key=octant, value=response, r.hap_i, r.lap_i) %>%
+                group_by(study, culture, octant) %>%
+                summarise(mean = mean(response, na.rm=T),
+                          se = se(response))
+
+ggplot(summary, aes(octant, mean, fill=culture)) + 
+    geom_bar(stat='identity', position='dodge') +
+    geom_errorbar(aes(ymin=mean-se, max=mean+se), position=position_dodge(0.9), width=0.1) +
+    facet_grid(study~.)
+```
