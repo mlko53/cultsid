@@ -4,36 +4,11 @@ BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
 OUTPUT: "gain_ant_sid.1D"
 MARK TR = 2 AND
-		trialtype = 4 WITH 1
+		trialtype = 4 WITH -1
 MARK TR = 2 AND
-		trialtype = 5 WITH 1
+		trialtype = 5 WITH 0
 MARK TR = 2 AND
 		trialtype = 6 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "nogain_ant_sid.1D"
-MARK TR = 2 AND 
-     trialtype = 8 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "loss_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 1 WITH 1
-MARK TR = 2 AND
-		trialtype = 2 WITH 1
-MARK TR = 2 AND
-		trialtype = 3 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "noloss_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 7 WITH 1
 END_VEC
 
 BEGIN_VEC
@@ -41,57 +16,11 @@ INPUT: "SID_bhvr_scan.csv"
 OUTPUT: "gain_out_sid.1D"
 MARK TR = 4 AND
 		trialtype = 4 AND
-        hit = 1 WITH 1
+        hit = 1 WITH -1
 MARK TR = 4 AND
 		trialtype = 5 AND
-        hit = 1 WITH 1
+        hit = 1 WITH 0
 MARK TR = 4 AND
 		trialtype = 6 AND
         hit = 1 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "nogain_out_sid.1D"
-MARK TR = 4 AND
-		trialtype = 4 AND
-        hit = 0 WITH 1
-MARK TR = 4 AND
-		trialtype = 5 AND
-        hit = 0 WITH 1
-MARK TR = 4 AND
-		trialtype = 6 AND
-        hit = 0 WITH 1
-MARK TR = 4 AND
-		trialtype = 8 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "loss_out_sid.1D"
-MARK TR = 4 AND
-		trialtype = 1 AND
-        hit = 0 WITH 1
-MARK TR = 4 AND
-		trialtype = 2 AND
-        hit = 0 WITH 1
-MARK TR = 4 AND
-		trialtype = 3 AND
-        hit = 0 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "noloss_out_sid.1D"
-MARK TR = 4 AND
-		trialtype = 1 AND
-        hit = 1 WITH 1
-MARK TR = 4 AND
-		trialtype = 2 AND
-        hit = 1 WITH 1
-MARK TR = 4 AND
-		trialtype = 3 AND
-        hit = 1 WITH 1
-MARK TR = 4 AND
-		trialtype = 7 WITH 1
 END_VEC

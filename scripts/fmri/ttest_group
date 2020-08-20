@@ -11,7 +11,7 @@ set script_dir = `pwd`
 # adwarp regresions to parent dataset:
 #
 
-foreach subject ( rt022718 he042718 jd051818 gl052518 ac081918 kt082818 mp083018 lp102118 ch102218 nb102318 lh102418 jk102518 fd111018 sm110518 mp110618 sw110818 mc111218 dv111518 kl112918 jd072919 tl111017 hw111117 qh111717 yg042518 xl042618 sw050818 yq052218 is060118 yp070418 yl070418 yl070518 yw070618 xz071218 mh071418 yx072518 yl080118 yw081018 yd081018 js101518 al052019 jl053119 wx060119 yd072319 az072519 yy072919 pw073019 yl073119 )
+foreach subject ( ac081918 ac082219 al052019 az072519 bg102919 ch102218 dv111518 fd111018 gl052518 he042718 hw111117 is060118 jd051818 jd072919 jl053119 js082419 js101518 jv102919 kl112918 kt082818 lh102418 lp102118 mc111218 mh071418 mp083018 mp110618 mr111019 nb102318 pw073019 qh111717 rt022718 sm110518 ss111119 sw050818 sw110818 tl111017 wx060119 xl042618 xz071218 yd072319 yd081018 yg042518 yl070418 yl070518 yl073119 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 yy072919 zp111019 )
 
 	cd ../data/fmri/${subject}*
 	adwarp -overwrite -apar anat+tlrc. -dpar zsid_reg_group+orig. -dxyz 2.9 -prefix zsid_reg_group
@@ -36,7 +36,7 @@ mkdir ../ttest/mid
 
 # first six regressors (motion) have 3 each; start at 19
 @ count = 1
-set tests = ( gvn_ant hgvlg_ant lvn_ant hlvll_ant )
+set tests = ( hgvn_ant hlvn_ant hgvn_out hlvn_out )
 set A = ( 19 22 25 28 )
 
 
@@ -53,107 +53,121 @@ foreach outfile ( ${tests} )
 
 	3dttest++ -overwrite -prefix ./${outfile}z -toz -AminusB \
 		-setA \
-            "../data/fmri/rt022718/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ac081918/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ac082219/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/bg102919/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ch102218/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/dv111518/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/fd111018/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/gl052518/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/he042718/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/jd051818/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/gl052518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/ac081918/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/kt082818/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mp083018/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/lp102118/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/ch102218/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/nb102318/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/lh102418/zsid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/jk102518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/fd111018/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sm110518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mp110618/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sw110818/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mc111218/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/dv111518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/kl112918/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/jd072919/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jk102518/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/js082419/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jv102919/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/kl112918/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/kt082818/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/lh102418/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/lp102118/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mc111218/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mp083018/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mp110618/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mr111019/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/nb102318/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/rt022718/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sm110518/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ss111119/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sw110818/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/zp111019/zsid_reg_group+tlrc[${A_i}]" \
         -setB \
-            #"../data/fmri/tl111017/zsid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/hw111117/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/qh111717/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yg042518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/xl042618/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sw050818/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yq052218/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/al052019/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/az072519/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/hw111117/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/is060118/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yp070418/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jl053119/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/js101518/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mh071418/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/pw073019/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/qh111717/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sw050818/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/tl111017/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/wx060119/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/xl042618/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/xz071218/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yd072319/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yd081018/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yg042518/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl070418/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl070518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yw070618/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/xz071218/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mh071418/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yx072518/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yl073119/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl080118/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yp070418/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yq052218/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yw070618/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yw081018/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yd081018/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/js101518/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/al052019/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/jl053119/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/wx060119/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yd072319/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/az072519/zsid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yx072518/zsid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yy072919/zsid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/yl073119/zsid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/pw073019/zsid_reg_group+tlrc[${A_i}]" \
 
 	mv ${outfile}z* ../ttest/sid
 
-	3dttest++ -overwrite -prefix ./${outfile}z -paired -toz -AminusB \
+	3dttest++ -overwrite -prefix ./${outfile}z -toz -AminusB \
 		-setA \
-            "../data/fmri/rt022718/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ac081918/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ac082219/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/bg102919/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ch102218/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/dv111518/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/fd111018/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/gl052518/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/he042718/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/jd051818/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/gl052518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/ac081918/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/kt082818/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mp083018/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/lp102118/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/ch102218/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/nb102318/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/lh102418/zmid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/jk102518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/fd111018/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sm110518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mp110618/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sw110818/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mc111218/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/dv111518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/kl112918/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/jd072919/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jk102518/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/js082419/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jv102919/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/kl112918/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/kt082818/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/lh102418/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/lp102118/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mc111218/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mp083018/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mp110618/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mr111019/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/nb102318/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/rt022718/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sm110518/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/ss111119/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sw110818/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/zp111019/zmid_reg_group+tlrc[${A_i}]" \
         -setB \
-            #"../data/fmri/tl111017/zmid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/hw111117/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/qh111717/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yg042518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/xl042618/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/sw050818/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yq052218/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/al052019/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/az072519/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/hw111117/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/is060118/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yp070418/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/jl053119/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/js101518/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/mh071418/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/pw073019/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/qh111717/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/sw050818/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/tl111017/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/wx060119/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/xl042618/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/xz071218/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yd072319/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yd081018/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yg042518/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl070418/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl070518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yw070618/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/xz071218/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/mh071418/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yx072518/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yl073119/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yl080118/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yp070418/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yq052218/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yw070618/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yw081018/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yd081018/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/js101518/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/al052019/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/jl053119/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/wx060119/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/yd072319/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/az072519/zmid_reg_group+tlrc[${A_i}]" \
+            "../data/fmri/yx072518/zmid_reg_group+tlrc[${A_i}]" \
             "../data/fmri/yy072919/zmid_reg_group+tlrc[${A_i}]" \
-            #"../data/fmri/yl073119/zmid_reg_group+tlrc[${A_i}]" \
-            "../data/fmri/pw073019/zmid_reg_group+tlrc[${A_i}]" \
 
 	mv ${outfile}z* ../ttest/mid
 end

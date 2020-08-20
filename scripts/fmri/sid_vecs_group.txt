@@ -2,44 +2,30 @@
 
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "gvn_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 4 WITH 1
-MARK TR = 2 AND
-		trialtype = 5 WITH 1
-MARK TR = 2 AND
-		trialtype = 6 WITH 1
+OUTPUT: "gain_ant_sid.1D"
 MARK TR = 2 AND 
-     trialtype = 8 WITH -1
+     trialtype = 8 WITH -1.5
+MARK TR = 2 AND
+		trialtype = 4 WITH -0.5
+MARK TR = 2 AND
+		trialtype = 5 WITH 0.5
+MARK TR = 2 AND
+		trialtype = 6 WITH 1.5
 END_VEC
 
 BEGIN_VEC
 INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "hgvlg_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 4 WITH -1
-MARK TR = 2 AND
-		trialtype = 6 WITH 1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "lvn_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 1 WITH 1
-MARK TR = 2 AND
-		trialtype = 2 WITH 1
-MARK TR = 2 AND
-		trialtype = 3 WITH 1
-MARK TR = 2 AND
-		trialtype = 7 WITH -1
-END_VEC
-
-BEGIN_VEC
-INPUT: "SID_bhvr_scan.csv"
-OUTPUT: "hlvll_ant_sid.1D"
-MARK TR = 2 AND
-		trialtype = 1 WITH -1
-MARK TR = 2 AND
-		trialtype = 3 WITH 1
+OUTPUT: "gain_out_sid.1D"
+MARK TR = 4 AND 
+     trialtype = 8 AND
+     hit = 1 WITH -1.5
+MARK TR = 4 AND
+		trialtype = 4 AND
+        hit = 1 WITH -0.5
+MARK TR = 4 AND
+		trialtype = 5 AND
+        hit = 1 WITH 0.5
+MARK TR = 4 AND
+		trialtype = 6 AND
+        hit = 1 WITH 1.5
 END_VEC
