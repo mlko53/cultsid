@@ -1,0 +1,78 @@
+#!/bin/bash
+
+function mean {
+    total=0
+    count=0
+    for i in "$@"
+    do
+        total=$(python2 -c "print $total + $i")
+        ((count++))
+    done
+    avg=$(python2 -c "print $total/$count")
+    echo $avg
+}
+
+script_dir=`pwd`
+mid_arr1=( )
+mid_arr2=( )
+mid_arr3=( )
+sid_arr1=( )
+sid_arr2=( )
+sid_arr3=( )
+
+# iterate over subjects
+#for subject in ac081918 ac082219 al052019 az072519 bg102919 ch102218 dv111518 fd111018 gl052518 he042718 hw111117 is060118 jd051818 jd072919 jl053119 js082419 js101518 jv102919 kl112918 kt082818 lh102418 lp102118 mc111218 mh071418 mp083018 mp110618 mr111019 nb102318 pw073019 qh111717 rt022718 sm110518 ss111119 sw050818 sw110818 tl111017 wx060119 xl042618 xz071218 yd072319 yd081018 yg042518 yl070418 yl070518 yl073119 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 yy072919 zp111019
+for subject in ac081918 ac082219
+do
+    cd ../data/fmri/${subject}
+
+    # get second line
+    line=`sed -n '2p' "3dFWHMx.1D"`
+
+    # split on space
+    IFS=' ' read -r -a array <<< "$line"
+
+    # delete first element
+    #del=${array[0]}
+    #array=( "${array[@]/$del}" )
+
+    # append to list
+    sid_arr1+=( ${array[1]} )
+    sid_arr2+=( ${array[2]} )
+    sid_arr3+=( ${array[3]} )
+
+    # repeat for mid
+    line=`sed -n '2p' "3dFWHMx.1D"`
+    IFS=' ' read -r -a array <<< "$line"
+    mid_arr1+=( ${array[1]} )
+    mid_arr2+=( ${array[2]} )
+    mid_arr3+=( ${array[3]} )
+
+    cd ${script_dir}
+done
+
+# average subject parameters
+mid_avg1="$(mean ${mid_arr1[@]})"
+mid_avg2="$(mean ${mid_arr2[@]})"
+mid_avg3="$(mean ${mid_arr3[@]})"
+sid_avg1="$(mean ${sid_arr1[@]})"
+sid_avg2="$(mean ${sid_arr2[@]})"
+sid_avg3="$(mean ${sid_arr3[@]})"
+
+cd ../masks
+
+3dClustSim -OKsmallmask -mask acingf+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix acing_mid
+3dClustSim -OKsmallmask -mask caudatef+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix caudate_mid
+3dClustSim -OKsmallmask -mask dlpfcf+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix dlpfc_mid
+3dClustSim -OKsmallmask -mask insf+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix ins_mid
+3dClustSim -OKsmallmask -mask mpfcf+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix mpfc_mid
+3dClustSim -OKsmallmask -mask nacc8mmf+tlrc -acf $mid_avg1 $mid_avg2 $mid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix nacc8mm_mid
+
+3dClustSim -OKsmallmask -mask acingf+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix acing_sid
+3dClustSim -OKsmallmask -mask caudatef+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix caudate_sid
+3dClustSim -OKsmallmask -mask dlpfcf+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix dlpfc_sid
+3dClustSim -OKsmallmask -mask insf+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix ins_sid
+3dClustSim -OKsmallmask -mask mpfcf+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix mpfc_sid
+3dClustSim -OKsmallmask -mask nacc8mmf+tlrc -acf $sid_avg1 $sid_avg2 $sid_avg3 -LOTS -iter 10000 -pthr .002 -nodec -prefix nacc8mm_sid
+
+cd ${script_dir}
