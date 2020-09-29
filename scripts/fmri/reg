@@ -39,9 +39,10 @@ foreach subject ( ${subjects} )
 	waver -dt 2.0 -GAM -numout 384 -input hVm_loss_out_sid.1D > hVm_loss_out_sidc.1D
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
-	if ( -e sid_reg+orig.BRIK ) then
-		rm -rf sid_reg+orig*
-	endif
+	#if ( -e sid_reg+orig.BRIK ) then
+	#	rm -rf sid_reg+orig*
+	#endif
+    rm -rf sid_reg+orig*
 	
 	cp -f $script_dir"/fmri/sid_runs.1D" ./
 
@@ -63,11 +64,11 @@ foreach subject ( ${subjects} )
 		-stim_file 9 'hVm_gain_out_sidc.1D' -stim_label 9 'hVm_gain_out_sid' \
 		-stim_file 10 'hVm_loss_out_sidc.1D' -stim_label 10 'hVm_loss_out_sid' \
 		-tout -fout -bucket sid_reg \
-        -errts errts_sid
+        #-errts errts_sid
 
-    adwarp -apar anat+tlrc -dpar errts_sid+orig -overwrite
+    #adwarp -apar anat+tlrc -dpar errts_sid+orig -overwrite
 
-    3dFWHMx -automask -input errts_sid+tlrc >> blur_estimates_9mm_12_2016.errts_sid.1D
+    #3dFWHMx -automask -input errts_sid+tlrc >> blur_estimates_9mm_12_2016.errts_sid.1D
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -111,9 +112,10 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
-	if ( -e mid_reg+orig.BRIK ) then
-		rm -rf mid_reg+orig*
-	endif
+	#if ( -e mid_reg+orig.BRIK ) then
+	#	rm -rf mid_reg+orig*
+	#endif
+    rm -rf mid_reg+orig*
 	
 	cp -f $script_dir"/fmri/mid_runs.1D" ./
 
@@ -131,11 +133,10 @@ foreach subject ( ${subjects} )
 		-stim_file 9 'hVm_gain_out_midc.1D' -stim_label 9 'hVm_gain_out_mid' \
 		-stim_file 10 'hVm_loss_out_midc.1D' -stim_label 10 'hVm_loss_out_mid' \
 		-tout -fout -bucket mid_reg \
-        -errts errts_mid
 
-    adwarp -apar anat+tlrc -dpar errts_mid+orig -overwrite
+    #adwarp -apar anat+tlrc -dpar errts_mid+orig -overwrite
 
-    3dFWHMx -automask -input errts_mid+tlrc >> blur_estimates_9mm_12_2016.errts_mid.1D
+    #3dFWHMx -automask -input errts_mid+tlrc >> blur_estimates_9mm_12_2016.errts_mid.1D
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
 

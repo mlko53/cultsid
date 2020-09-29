@@ -11,11 +11,11 @@ set script_dir = `pwd`
 # adwarp regresions to parent dataset:
 #
 
-foreach subject ( ac081918 ac082219 al052019 az072519 bg102919 ch102218 dv111518 fd111018 gl052518 he042718 hw111117 is060118 jd051818 jd072919 jl053119 js082419 js101518 jv102919 kl112918 kt082818 lh102418 lp102118 mc111218 mh071418 mp083018 mp110618 mr111019 nb102318 pw073019 qh111717 rt022718 sm110518 ss111119 sw050818 sw110818 tl111017 wx060119 xl042618 xz071218 yd072319 yd081018 yg042518 yl070418 yl070518 yl073119 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 yy072919 zp111019 )
+foreach subject ( ac081918 ac082219 al052019 az072519 bg102919 ch102218 dv111518 fd111018 gl052518 he042718 hw111117 is060118 jd051818 jd072919 jk102518 jl053119 js082419 js101518 jv102919 kl112918 kt082818 lh102418 lp102118 mc111218 mh071418 mp083018 mp110618 mr111019 nb102318 pw073019 qh111717 rt022718 sm110518 sw050818 sw110818 tl111017 wx060119 xl042618 xz071218 yd072319 yd081018 yg042518 yl070418 yl070518 yl073119 yl080118 yp070418 yq052218 yw070618 yw081018 yx072518 yy072919 zp111019 )
 
 	cd ../data/fmri/${subject}*
-	adwarp -overwrite -apar anat+tlrc. -dpar zsid_reg+orig. -dxyz 2.9 -prefix zsid_reg
-	adwarp -overwrite -apar anat+tlrc. -dpar zmid_reg+orig. -dxyz 2.9 -prefix zmid_reg
+	#adwarp -overwrite -apar anat+tlrc. -dpar zsid_reg+orig. -dxyz 2.9 -prefix zsid_reg
+	#adwarp -overwrite -apar anat+tlrc. -dpar zmid_reg+orig. -dxyz 2.9 -prefix zmid_reg
     cd $script_dir
 
 end
@@ -36,9 +36,9 @@ mkdir ../ttest/mid
 
 # first six regressors (motion) have 3 each; start at 19
 @ count = 1
-set tests = ( gain_ant gain_out )
-set A = ( 19 22 )
-set B = ( 19 22 )
+set tests = ( gVnot_ant lVnot_ant hVm_gain_out hVm_loss_out )
+set A = ( 19 22 25 28 )
+set B = ( 19 22 25 28 )
 
 
 #------------	
@@ -56,7 +56,7 @@ foreach outfile ( ${tests} )
 
 	3dttest++ -overwrite -prefix ./${outfile}z -paired -toz -AminusB \
 		-setA \
-            "../data/fmri/ac081918/zsid_reg+tlrc[${A_i}]" \
+            #"../data/fmri/ac081918/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/ac082219/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/al052019/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/az072519/zsid_reg+tlrc[${A_i}]" \
@@ -89,7 +89,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/qh111717/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/rt022718/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/sm110518/zsid_reg+tlrc[${A_i}]" \
-            "../data/fmri/ss111119/zsid_reg+tlrc[${A_i}]" \
+            #"../data/fmri/ss111119/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/sw050818/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/sw110818/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/tl111017/zsid_reg+tlrc[${A_i}]" \
@@ -111,7 +111,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/yy072919/zsid_reg+tlrc[${A_i}]" \
             "../data/fmri/zp111019/zsid_reg+tlrc[${A_i}]" \
 		-setB \
-            "../data/fmri/ac081918/zsid_reg+tlrc[${B_i}]" \
+            #"../data/fmri/ac081918/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/ac082219/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/al052019/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/az072519/zsid_reg+tlrc[${B_i}]" \
@@ -144,7 +144,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/qh111717/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/rt022718/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/sm110518/zsid_reg+tlrc[${B_i}]" \
-            "../data/fmri/ss111119/zsid_reg+tlrc[${B_i}]" \
+            #"../data/fmri/ss111119/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/sw050818/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/sw110818/zsid_reg+tlrc[${B_i}]" \
             "../data/fmri/tl111017/zsid_reg+tlrc[${B_i}]" \
@@ -170,7 +170,7 @@ foreach outfile ( ${tests} )
 
 	3dttest++ -overwrite -prefix ./${outfile}z -paired -toz -AminusB \
 		-setA \
-            "../data/fmri/ac081918/zmid_reg+tlrc[${A_i}]" \
+            #"../data/fmri/ac081918/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/ac082219/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/al052019/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/az072519/zmid_reg+tlrc[${A_i}]" \
@@ -203,7 +203,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/qh111717/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/rt022718/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/sm110518/zmid_reg+tlrc[${A_i}]" \
-            "../data/fmri/ss111119/zmid_reg+tlrc[${A_i}]" \
+            #"../data/fmri/ss111119/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/sw050818/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/sw110818/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/tl111017/zmid_reg+tlrc[${A_i}]" \
@@ -225,7 +225,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/yy072919/zmid_reg+tlrc[${A_i}]" \
             "../data/fmri/zp111019/zmid_reg+tlrc[${A_i}]" \
 		-setB \
-            "../data/fmri/ac081918/zmid_reg+tlrc[${B_i}]" \
+            #"../data/fmri/ac081918/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/ac082219/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/al052019/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/az072519/zmid_reg+tlrc[${B_i}]" \
@@ -258,7 +258,7 @@ foreach outfile ( ${tests} )
             "../data/fmri/qh111717/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/rt022718/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/sm110518/zmid_reg+tlrc[${B_i}]" \
-            "../data/fmri/ss111119/zmid_reg+tlrc[${B_i}]" \
+            #"../data/fmri/ss111119/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/sw050818/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/sw110818/zmid_reg+tlrc[${B_i}]" \
             "../data/fmri/tl111017/zmid_reg+tlrc[${B_i}]" \

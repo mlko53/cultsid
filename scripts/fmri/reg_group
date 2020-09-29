@@ -33,34 +33,33 @@ foreach subject ( ${subjects} )
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
-	waver -dt 2.0 -GAM -numout 384 -input hgvn_ant_sid.1D > hgvn_ant_sidc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hlvn_ant_sid.1D > hlvn_ant_sidc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hgvn_out_sid.1D > hgvn_out_sidc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hlvn_out_sid.1D > hlvn_out_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input gVnot_ant_sid.1D > gVnot_ant_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input lVnot_ant_sid.1D > lVnot_ant_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input hVm_gain_out_sid.1D > hVm_gain_out_sidc.1D
+	waver -dt 2.0 -GAM -numout 384 -input hVm_loss_out_sid.1D > hVm_loss_out_sidc.1D
     
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
-	if ( -e sid_reg_group+orig.BRIK ) then
-		rm -rf sid_reg_group+orig*
-	endif
+	#if ( -e sid_reg_group+orig.BRIK ) then
+	#	rm -rf sid_reg_group+orig*
+	#endif
+	rm -rf sid_reg_group+orig*
 	
 	cp -f $script_dir"/fmri/sid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
-	3dDeconvolve -float -jobs 8 -input sid_mbnf+orig -jobs 6 -concat sid_runs.1D -nfirst 0 -num_stimts 12 -polort 1 \
+	3dDeconvolve -float -jobs 8 -input sid_mbnf+orig -jobs 6 -concat sid_runs.1D -nfirst 0 -num_stimts 10 -polort 1 \
 		-stim_file 1 '3dmotionsid.1D[1]' -stim_label 1 'roll' \
 		-stim_file 2 '3dmotionsid.1D[2]' -stim_label 2 'pitch' \
 		-stim_file 3 '3dmotionsid.1D[3]' -stim_label 3 'yaw' \
 		-stim_file 4 '3dmotionsid.1D[4]' -stim_label 4 'dS' \
 		-stim_file 5 '3dmotionsid.1D[5]' -stim_label 5 'dL' \
 		-stim_file 6 '3dmotionsid.1D[6]' -stim_label 6 'dP' \
-		-stim_file 7 'hgvn_ant_sidc.1D' -stim_label 7 'hgvn_ant' \
-		-stim_file 8 'hlvn_ant_sidc.1D' -stim_label 8 'hlvn_ant' \
-		-stim_file 9 'hgvn_out_sidc.1D' -stim_label 9 'hgvn_out' \
-		-stim_file 10 'hlvn_out_sidc.1D' -stim_label 10 'hlvn_out' \
-        -stim_file 11 'bsid_mbnf_csf_mask.1D' -stim_label 11 'csf' \
-        -stim_file 12 'bsid_mbnf_wm_mask.1D' -stim_label 12 'wm' \
+		-stim_file 7 'gVnot_ant_sidc.1D' -stim_label 7 'gVnot_ant_sid' \
+		-stim_file 8 'lVnot_ant_sidc.1D' -stim_label 8 'lVnot_ant_sid' \
+		-stim_file 9 'hVm_gain_out_sidc.1D' -stim_label 9 'hVm_gain_out_sid' \
+		-stim_file 10 'hVm_loss_out_sidc.1D' -stim_label 10 'hVm_loss_out_sid' \
 		-tout -fout -bucket sid_reg_group
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
@@ -98,34 +97,33 @@ foreach subject ( ${subjects} )
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
-	waver -dt 2.0 -GAM -numout 384 -input hgvn_ant_mid.1D > hgvn_ant_midc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hlvn_ant_mid.1D > hlvn_ant_midc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hgvn_out_mid.1D > hgvn_out_midc.1D
-	waver -dt 2.0 -GAM -numout 384 -input hlvn_out_mid.1D > hlvn_out_midc.1D
+	waver -dt 2.0 -GAM -numout 384 -input gVnot_ant_mid.1D > gVnot_ant_midc.1D
+	waver -dt 2.0 -GAM -numout 384 -input lVnot_ant_mid.1D > lVnot_ant_midc.1D
+	waver -dt 2.0 -GAM -numout 384 -input hVm_gain_out_mid.1D > hVm_gain_out_midc.1D
+	waver -dt 2.0 -GAM -numout 384 -input hVm_loss_out_mid.1D > hVm_loss_out_midc.1D
 
 #-#-#-#-#-#-#-#-#-#-#-		Clean old regression file:		-#-#-#-#-#-#-#-#-#-#-#
 
-	if ( -e mid_reg_group+orig.BRIK ) then
-		rm -rf mid_reg_group+orig*
-	endif
+	#if ( -e mid_reg_group+orig.BRIK ) then
+	#	rm -rf mid_reg_group+orig*
+	#endif
+	rm -rf mid_reg_group+orig*
 	
 	cp -f $script_dir"/fmri/mid_runs.1D" ./
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
-	3dDeconvolve -float -jobs 8 -input mid_mbnf+orig -jobs 6 -concat mid_runs.1D -nfirst 0 -num_stimts 12 -polort 1 \
+	3dDeconvolve -float -jobs 8 -input mid_mbnf+orig -jobs 6 -concat mid_runs.1D -nfirst 0 -num_stimts 10 -polort 1 \
 		-stim_file 1 '3dmotionmid.1D[1]' -stim_label 1 'roll' \
 		-stim_file 2 '3dmotionmid.1D[2]' -stim_label 2 'pitch' \
 		-stim_file 3 '3dmotionmid.1D[3]' -stim_label 3 'yaw' \
 		-stim_file 4 '3dmotionmid.1D[4]' -stim_label 4 'dS' \
 		-stim_file 5 '3dmotionmid.1D[5]' -stim_label 5 'dL' \
 		-stim_file 6 '3dmotionmid.1D[6]' -stim_label 6 'dP' \
-		-stim_file 7 'hgvn_ant_midc.1D' -stim_label 7 'hgvn_ant' \
-		-stim_file 8 'hlvn_ant_midc.1D' -stim_label 8 'hlvn_ant' \
-		-stim_file 9 'hgvn_out_midc.1D' -stim_label 9 'hgvn_out' \
-		-stim_file 10 'hlvn_out_midc.1D' -stim_label 10 'hlvn_out' \
-        -stim_file 11 'bmid_mbnf_csf_mask.1D' -stim_label 11 'csf' \
-        -stim_file 12 'bmid_mbnf_wm_mask.1D' -stim_label 12 'wm' \
+		-stim_file 7 'gVnot_ant_midc.1D' -stim_label 7 'gVnot_ant_mid' \
+		-stim_file 8 'lVnot_ant_midc.1D' -stim_label 8 'lVnot_ant_mid' \
+		-stim_file 9 'hVm_gain_out_midc.1D' -stim_label 9 'hVm_gain_out_mid' \
+		-stim_file 10 'hVm_loss_out_midc.1D' -stim_label 10 'hVm_loss_out_mid' \
 		-tout -fout -bucket mid_reg_group
 	
 #-#-#-#-#-#-#-#-#-#-#-		Write zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
