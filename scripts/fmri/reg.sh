@@ -24,12 +24,12 @@ echo starting to process SID
 
 foreach subject ( ${subjects} )
 
-    cd ../data/fmri/${subject}*
+    cd ../data/fmri/${subject}*/func_proc
     echo processing ${subject} 
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/sid_vecs.txt" ${subject}
+	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/sid_vecs_group.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -42,7 +42,7 @@ foreach subject ( ${subjects} )
 	#if ( -e sid_reg+orig.BRIK ) then
 	#	rm -rf sid_reg+orig*
 	#endif
-    rm -rf sid_reg+orig*
+    #rm -rf sid_reg+orig*
 	
 	cp -f $script_dir"/fmri/sid_runs.1D" ./
 
@@ -52,13 +52,13 @@ foreach subject ( ${subjects} )
     rm blur_estimates*
     rm __ats_tmp*
 
-	3dDeconvolve -float -jobs 8 -input sid_mbnf+orig -jobs 6 -concat sid_runs.1D -nfirst 0 -num_stimts 10 -polort 1 \
-		-stim_file 1 '3dmotionsid.1D[1]' -stim_label 1 'roll' \
-		-stim_file 2 '3dmotionsid.1D[2]' -stim_label 2 'pitch' \
-		-stim_file 3 '3dmotionsid.1D[3]' -stim_label 3 'yaw' \
-		-stim_file 4 '3dmotionsid.1D[4]' -stim_label 4 'dS' \
-		-stim_file 5 '3dmotionsid.1D[5]' -stim_label 5 'dL' \
-		-stim_file 6 '3dmotionsid.1D[6]' -stim_label 6 'dP' \
+	3dDeconvolve -float -jobs 8 -input sid_pp_tlrc+tlrc -jobs 6 -concat sid_runs.1D -censor sid_censor.1D -nfirst 0 -num_stimts 10 -polort 1 \
+		-stim_file 1 '3dmotion_sid.1D[1]' -stim_label 1 'roll' \
+		-stim_file 2 '3dmotion_sid.1D[2]' -stim_label 2 'pitch' \
+		-stim_file 3 '3dmotion_sid.1D[3]' -stim_label 3 'yaw' \
+		-stim_file 4 '3dmotion_sid.1D[4]' -stim_label 4 'dS' \
+		-stim_file 5 '3dmotion_sid.1D[5]' -stim_label 5 'dL' \
+		-stim_file 6 '3dmotion_sid.1D[6]' -stim_label 6 'dP' \
 		-stim_file 7 'gVnot_ant_sidc.1D' -stim_label 7 'gVnot_ant_sid' \
 		-stim_file 8 'lVnot_ant_sidc.1D' -stim_label 8 'lVnot_ant_sid' \
 		-stim_file 9 'hVm_gain_out_sidc.1D' -stim_label 9 'hVm_gain_out_sid' \
@@ -76,7 +76,7 @@ foreach subject ( ${subjects} )
 		rm -rf zsid_reg+orig*
 	endif
 	
-	3dmerge -doall -1zscore -prefix zsid_reg sid_reg+orig
+	3dmerge -doall -1zscore -prefix zsid_reg sid_reg+tlrc
 
 #-#-#-#-#-#-#-#-#-#-#-		Remove non-zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -96,12 +96,12 @@ echo starting to process MID
 
 foreach subject ( ${subjects} )
 
-    cd ../data/fmri/${subject}*
+    cd ../data/fmri/${subject}*/func_proc
     echo processing ${subject} 
 
 #-#-#-#-#-#-#-#-#-#-#-		Run makeVec on model file:		-#-#-#-#-#-#-#-#-#-#-#
 	
-	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/mid_vecs.txt" ${subject}
+	python2 $script_dir"/fmri/makeVec.py" $script_dir"/fmri/mid_vecs_group.txt" ${subject}
 	
 #-#-#-#-#-#-#-#-#-#-#-		Run waver on vectors:		-#-#-#-#-#-#-#-#-#-#-#
 
@@ -121,13 +121,13 @@ foreach subject ( ${subjects} )
 
 #-#-#-#-#-#-#-#-#-#-#-		Run 3dDeconvolve:		-#-#-#-#-#-#-#-#-#-#-#
 
-	3dDeconvolve -float -jobs 8 -input mid_mbnf+orig -jobs 6 -concat mid_runs.1D -nfirst 0 -num_stimts 10 -polort 1 \
-		-stim_file 1 '3dmotionmid.1D[1]' -stim_label 1 'roll' \
-		-stim_file 2 '3dmotionmid.1D[2]' -stim_label 2 'pitch' \
-		-stim_file 3 '3dmotionmid.1D[3]' -stim_label 3 'yaw' \
-		-stim_file 4 '3dmotionmid.1D[4]' -stim_label 4 'dS' \
-		-stim_file 5 '3dmotionmid.1D[5]' -stim_label 5 'dL' \
-		-stim_file 6 '3dmotionmid.1D[6]' -stim_label 6 'dP' \
+	3dDeconvolve -float -jobs 8 -input mid_pp_tlrc+tlrc -jobs 6 -concat mid_runs.1D -censor mid_censor.1D -nfirst 0 -num_stimts 10 -polort 1 \
+		-stim_file 1 '3dmotion_mid.1D[1]' -stim_label 1 'roll' \
+		-stim_file 2 '3dmotion_mid.1D[2]' -stim_label 2 'pitch' \
+		-stim_file 3 '3dmotion_mid.1D[3]' -stim_label 3 'yaw' \
+		-stim_file 4 '3dmotion_mid.1D[4]' -stim_label 4 'dS' \
+		-stim_file 5 '3dmotion_mid.1D[5]' -stim_label 5 'dL' \
+		-stim_file 6 '3dmotion_mid.1D[6]' -stim_label 6 'dP' \
 		-stim_file 7 'gVnot_ant_midc.1D' -stim_label 7 'gVnot_ant_mid' \
 		-stim_file 8 'lVnot_ant_midc.1D' -stim_label 8 'lVnot_ant_mid' \
 		-stim_file 9 'hVm_gain_out_midc.1D' -stim_label 9 'hVm_gain_out_mid' \
@@ -144,11 +144,25 @@ foreach subject ( ${subjects} )
 		rm -rf zmid_reg+orig*
 	endif
 	
-	3dmerge -doall -1zscore -prefix zmid_reg mid_reg+orig
+	3dmerge -doall -1zscore -prefix zmid_reg mid_reg+tlrc
 
 #-#-#-#-#-#-#-#-#-#-#-		Remove non-zscored dataset:		-#-#-#-#-#-#-#-#-#-#-#
 
 	rm -rf mid_reg+orig*
+    rm *.err
+    if (! -d ../reg_group ) then
+        mkdir ../reg_group
+    endif
+    mv sid_reg* ../reg_group
+    mv zsid_reg* ../reg_group
+    mv *ant_sid* ../reg_group
+    mv *out_sid* ../reg_group
+    mv sid_runs.1D ../reg_group
+    mv mid_reg* ../reg_group
+    mv zmid_reg* ../reg_group
+    mv *ant_mid* ../reg_group
+    mv *out_mid* ../reg_group
+    mv mid_runs.1D  ../reg_group
 	
 	# returns to home directory
 	cd $script_dir

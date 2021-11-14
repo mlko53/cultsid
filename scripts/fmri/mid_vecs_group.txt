@@ -2,30 +2,75 @@
 
 BEGIN_VEC
 INPUT: "MID_bhvr_scan.csv"
-OUTPUT: "gain_ant_mid.1D"
-MARK TR = 2 AND 
-     trialtype = 8 WITH -1.5
-MARK TR = 2 AND
-		trialtype = 4 WITH -0.5
-MARK TR = 2 AND
-		trialtype = 5 WITH 0.5
-MARK TR = 2 AND
-		trialtype = 6 WITH 1.5
+OUTPUT: "gVnot_ant_mid.1D"
+MARK TR = 1, 2 AND
+		trialtype = 4 WITH 1
+MARK TR = 1, 2 AND
+		trialtype = 5 WITH 2
+MARK TR = 1, 2 AND
+		trialtype = 6 WITH 3
+MARK TR = 1, 2 AND
+		trialtype = 8 WITH 0
 END_VEC
 
 BEGIN_VEC
 INPUT: "MID_bhvr_scan.csv"
-OUTPUT: "gain_out_mid.1D"
-MARK TR = 4 AND 
-     trialtype = 8 AND
-     hit = 1 WITH -1.5
+OUTPUT: "lVnot_ant_mid.1D"
+MARK TR = 1, 2 AND
+		trialtype = 1 WITH -1
+MARK TR = 1, 2 AND
+		trialtype = 2 WITH -2
+MARK TR = 1, 2 AND
+		trialtype = 3 WITH -3
+MARK TR = 1, 2 AND
+		trialtype = 7 WITH 0
+END_VEC
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "hVm_gain_out_mid.1D"
 MARK TR = 4 AND
 		trialtype = 4 AND
-        hit = 1 WITH -0.5
+        hit = 1 WITH 1
 MARK TR = 4 AND
 		trialtype = 5 AND
-        hit = 1 WITH 0.5
+        hit = 1 WITH 2
 MARK TR = 4 AND
 		trialtype = 6 AND
-        hit = 1 WITH 1.5
+        hit = 1 WITH 3
+MARK TR = 4 AND
+		trialtype = 4 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 5 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 6 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 8 WITH 0
+END_VEC
+
+BEGIN_VEC
+INPUT: "MID_bhvr_scan.csv"
+OUTPUT: "hVm_loss_out_mid.1D"
+MARK TR = 4 AND
+		trialtype = 1 AND
+        hit = 1 WITH -1
+MARK TR = 4 AND
+		trialtype = 2 AND
+        hit = 1 WITH -2 MARK TR = 4 AND
+		trialtype = 3 AND
+        hit = 1 WITH -3
+MARK TR = 4 AND
+		trialtype = 1 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 2 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 3 AND
+        hit = 0 WITH 0
+MARK TR = 4 AND
+		trialtype = 7 WITH 0
 END_VEC

@@ -4,15 +4,15 @@ library(stringr)
 library(readr)
 
 
-SUBJECTS <- c('ac081918', 'ac082219', 'al052019', 'ao082819', 'az072519',
-              'bg102919', 'ch102218', 'dj051418', 'dv111518', 'dy051818',
-              'fd111018', 'gl052518', 'hc101818', 'he042718',
+SUBJECTS <- c('ac081918', 'ac082219', 'al052019', 'az072519',
+              'bg102919', 'ch102218', 'dv111518',
+              'fd111018', 'gl052518', 'he042718',
               'hw111117', 'is060118', 'jd051818', 'jd072919', 'jk102518',
               'jl053119', 'js082419', 'js101518', 'jv102919', 'kl112918',
               'kt082818', 'lh102418', 'lp102118', 'mc111218', 'mh071418',
               'mp083018', 'mp110618', 'mr111019', 'nb102318', 'pw073019',
-              'qh111717', 'rt022718', 'sh101518', 'sm110518', 'ss111119',
-              'sw050818', 'sw110818', 'tl111017', 'wh071918', 'wx060119',
+              'qh111717', 'rt022718', 'sm110518',
+              'sw050818', 'sw110818', 'tl111017', 'wx060119',
               'xl042618', 'xz071218', 'yd072319', 'yd081018', 'yg042518',
               'yl070418', 'yl070518', 'yl073119', 'yl080118', 'yp070418',
               'yq052218', 'yw070618', 'yw081018', 'yx072518', 'yy072919', 'zp111019')
@@ -64,7 +64,7 @@ for(run in RUNS){
                 
                 df_voi <- df_voi %>% 
                     bind_cols(censor) %>%
-                    mutate(!!col_name := ifelse(.[[1]] > upper | .[[1]] < lower, yes = NA, no = .[[1]])) %>%
+                    mutate(!!col_name := ifelse(.[[1]] > upper | .[[1]] < lower, yes = .[[1]], no = .[[1]])) %>%
                     transmute(!!col_name := ifelse(censor == 0, yes = NA, no = .[[1]]))
 
 
@@ -76,7 +76,7 @@ for(run in RUNS){
                 bhvr <- bind_cols(bhvr, df_voi)
             }
         }
-        bhvr <- bhvr %>% subset(TR == 1)
+        bhvr <- bhvr %>% subset(TR == 1) %>% mutate(subject = subject)
         allSubjects <-  bind_rows(allSubjects, bhvr)
         #### DO SOMETHING MORE HERE ####
     }
